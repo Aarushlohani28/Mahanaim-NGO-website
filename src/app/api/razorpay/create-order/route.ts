@@ -90,21 +90,25 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Direct SQL insert into Supabase database
+    // Direct SQL insert into Supabase database (fault-tolerant)
     const donId = `don-${Date.now()}`;
     const createdAt = new Date().toISOString();
 
-    await sql`
-      INSERT INTO donations (id, user_id, amount, order_id, status, created_at)
-      VALUES (
-        ${donId},
-        ${userId},
-        ${cleanAmount},
-        ${orderId},
-        'pending',
-        ${createdAt}
-      )
-    `;
+    try {
+      await sql`
+        INSERT INTO donations (id, user_id, amount, order_id, status, created_at)
+        VALUES (
+          ${donId},
+          ${userId},
+          ${cleanAmount},
+          ${orderId},
+          'pending',
+          ${createdAt}
+        )
+      `;
+    } catch (dbErr: any) {
+      console.warn("Supabase DB insert warning (order created successfully):", dbErr?.message || dbErr);
+    }
 
     return NextResponse.json({
       success: true,
