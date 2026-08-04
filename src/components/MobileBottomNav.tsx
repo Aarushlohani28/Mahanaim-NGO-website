@@ -46,12 +46,11 @@ export default function MobileBottomNav() {
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 {user.imageUrl ? (
-                  <Image
+                  <img
                     src={user.imageUrl}
                     alt={user.fullName || "User Profile"}
-                    width={44}
-                    height={44}
-                    className="rounded-full object-cover border border-border"
+                    referrerPolicy="no-referrer"
+                    className="w-11 h-11 rounded-full object-cover border border-border"
                   />
                 ) : (
                   <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
@@ -165,12 +164,11 @@ export default function MobileBottomNav() {
             aria-label="Account Menu"
           >
             {isSignedIn && user?.imageUrl ? (
-              <Image
+              <img
                 src={user.imageUrl}
                 alt="Account"
-                width={22}
-                height={22}
-                className="rounded-full object-cover border border-border"
+                referrerPolicy="no-referrer"
+                className="w-5 h-5 rounded-full object-cover border border-border"
               />
             ) : (
               <User className="w-5 h-5" />
