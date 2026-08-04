@@ -1,7 +1,7 @@
 const postgres = require("postgres");
 
-const connectionString = process.env.DATABASE_URL || "postgresql://postgres:BaconEggCheese@28@db.zvbyafopdxtfdqucilgl.supabase.co:5432/postgres";
-const sql = postgres(connectionString);
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres.zvbyafopdxtfdqucilgl:BaconEggCheese%4028@aws-1-ap-south-1.pooler.supabase.com:5432/postgres";
+const sql = postgres(connectionString, { ssl: "require" });
 
 async function init() {
   console.log("Connecting to Supabase PostgreSQL and creating tables...");
