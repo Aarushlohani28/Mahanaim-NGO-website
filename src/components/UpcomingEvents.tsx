@@ -66,12 +66,14 @@ export default function UpcomingEvents() {
               </button>
             </div>
 
-            <Link
-              href="/donate"
-              className="text-sm font-semibold text-foreground hover:text-primary flex items-center gap-1.5 group transition-colors"
-            >
-              Sponsor a drive <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </Link>
+            {events.length > 3 && (
+              <Link
+                href="/events"
+                className="text-sm font-semibold text-foreground hover:text-primary flex items-center gap-1.5 group transition-colors"
+              >
+                Browse All Drives <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            )}
           </div>
         </div>
 

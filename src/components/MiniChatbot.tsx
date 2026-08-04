@@ -124,19 +124,27 @@ export default function MiniChatbot() {
     }
   };
 
+  // Window event listener for mobile navbar trigger
+  useEffect(() => {
+    const handleToggle = () => setIsOpen((prev) => !prev);
+    window.addEventListener("toggle-chatbot", handleToggle);
+    return () => window.removeEventListener("toggle-chatbot", handleToggle);
+  }, []);
+
   return (
     <>
-      {/* ── Floating Action Button ── */}
+      {/* ── Floating Action Button (Hidden on Mobile, visible sm+) ── */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="
+            hidden sm:flex
             fixed bottom-6 right-6 w-16 h-16
             bg-white dark:bg-slate-800
             border border-border
             text-foreground
             rounded-full shadow-glass dark:shadow-glassDark
-            flex items-center justify-center
+            items-center justify-center
             hover:scale-105 hover:shadow-cardHover
             transition-all duration-300
             z-50
@@ -151,13 +159,15 @@ export default function MiniChatbot() {
       {isOpen && (
         <div
           className="
-            fixed bottom-6 right-6
-            w-[340px] sm:w-[400px]
+            fixed bottom-20 sm:bottom-6
+            right-4 sm:right-6
+            left-4 sm:left-auto
+            w-auto sm:w-[400px]
             bg-white dark:bg-slate-900
             border border-border
             shadow-glassDark dark:shadow-cardDark
-            z-50 flex flex-col
-            h-[550px] max-h-[85vh]
+            z-[60] flex flex-col
+            h-[500px] sm:h-[550px] max-h-[75vh] sm:max-h-[85vh]
             rounded-3xl overflow-hidden
             animate-in slide-in-from-bottom-5 duration-300
           "
