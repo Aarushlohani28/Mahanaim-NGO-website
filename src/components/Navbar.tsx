@@ -23,9 +23,9 @@ export default function Navbar() {
   const clerkAppearance = resolvedTheme === "dark" ? { baseTheme: dark } : {};
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/75 dark:bg-black/75 border-b border-black/5 dark:border-white/10 saturate-180 transition-all duration-300">
+    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/75 dark:bg-black/75 border-b border-black/10 dark:border-white/10 saturate-180 transition-all duration-300">
       {/* Top Announcement Bar */}
-      <div className="bg-zinc-900/95 dark:bg-zinc-900/95 text-zinc-300 text-[11px] py-1.5 px-4 text-center font-medium tracking-tight flex justify-between items-center max-w-7xl mx-auto border-b border-white/10">
+      <div className="bg-zinc-900/80 dark:bg-zinc-900/80 text-zinc-300 text-[11px] py-1.5 px-4 text-center font-medium tracking-tight flex justify-between items-center max-w-7xl mx-auto border-b border-white/10 backdrop-blur-md">
         <span className="hidden sm:inline flex items-center gap-1.5">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           Mahanaim NGO: Spread Love.... Spread Peace....

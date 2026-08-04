@@ -26,15 +26,15 @@ export default function MobileBottomNav() {
     >
       <nav
         className={`
-          bg-white/95 dark:bg-slate-900/95
-          backdrop-blur-xl
-          border border-border
-          shadow-2xl
-          dark:shadow-glassDark
+          bg-white/75 dark:bg-black/75
+          backdrop-blur-2xl
+          saturate-180
+          border border-black/10 dark:border-white/15
+          shadow-appleHover
           flex items-center justify-between px-6 py-3
           w-full max-w-md mx-auto
           transition-all duration-500
-          ${isScrolled ? "rounded-none rounded-t-3xl pb-safe" : "rounded-[2rem]"}
+          ${isScrolled ? "rounded-none rounded-t-3xl pb-safe" : "rounded-full"}
         `}
       >
         <Link
