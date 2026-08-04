@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   DESIGN TOKEN SYSTEM — CSS Custom Properties
+   Light mode under :root, dark mode under .dark
+   ============================================================ */
+@layer base {
+  :root {
+    /* Page Background — Apple canvas gray */
+    --background: #F5F5F7;
+    --foreground: #1D1D1F;       /* Apple primary dark text */
+
+    /* Card / Surface layers */
+    --card: #FFFFFF;
+    --card-foreground: #1D1D1F;
+
+    /* Secondary surface (inputs, pill badges) */
+    --secondary: #E8E8ED;
+    --secondary-foreground: #1D1D1F;
+
+    /* Muted — secondary descriptions, captions */
+    --muted: #E5E5EA;
+    --muted-foreground: #86868B;   /* Apple classic muted text */
+
+    /* Primary brand action (vibrant red/coral accent) */
+    --primary: #FF3B30;
+    --primary-foreground: #FFFFFF;
+
+    /* Accent */
+    --accent: #F3A23A;
+    --accent-foreground: #FFFFFF;
+
+    /* Borders, dividers */
+    --border: rgba(0, 0, 0, 0.08);
+
+    /* Focus ring */
+    --ring: #FF3B30;
+
+    /* Navbar / header surface */
+    --header-bg: rgba(255, 255, 255, 0.75);
+    --header-border: rgba(0, 0, 0, 0.06);
+
+    /* Footer */
+    --footer-bg: #111113;
+    --footer-text: #86868B;
+  }
+
+  .dark {
+    /* Page Background — Apple deep black canvas */
+    --background: #000000;
+    --foreground: #F5F5F7;       /* Apple primary light text */
+
+    /* Card surface */
+    --card: #161618;
+    --card-foreground: #F5F5F7;
+
+    /* Secondary surface */
+    --secondary: #1C1C1E;
+    --secondary-foreground: #E5E5EA;
+
+    /* Muted */
+    --muted: #2C2C2E;
+    --muted-foreground: #86868B;
+
+    /* Primary brand action */
+    --primary: #FF453A;
+    --primary-foreground: #FFFFFF;
+
+    /* Accent */
+    --accent: #F3A23A;
+    --accent-foreground: #000000;
+
+    /* Borders */
+    --border: rgba(255, 255, 255, 0.1);
+
+    /* Focus ring */
+    --ring: #FF453A;
+
+    /* Navbar */
+    --header-bg: rgba(0, 0, 0, 0.75);
+    --header-border: rgba(255, 255, 255, 0.1);
+
+    /* Footer */
+    --footer-bg: #000000;
+    --footer-text: #86868B;
+  }
+}
+
+/* ============================================================
+   BASE ELEMENT STYLES
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", var(--font-outfit), system-ui, sans-serif;
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    letter-spacing: -0.01em;
+  }
+
+  html:not(.dark) body {
+    background-color: var(--background);
+  }
+
+  ::selection {
+    background-color: #FF3B30;
+    color: #FFFFFF;
+  }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInFromBottom {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.25s ease-out forwards;
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-bottom-5 {
+  animation: slideInFromBottom 0.3s ease-out forwards;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
