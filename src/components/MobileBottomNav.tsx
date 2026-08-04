@@ -106,61 +106,65 @@ export default function MobileBottomNav() {
         className={`md:hidden fixed z-50 transition-all duration-500 ease-in-out flex justify-center ${
           isScrolled
             ? "bottom-0 left-0 right-0 px-0 pb-0"
-            : "bottom-6 left-4 right-4"
+            : "bottom-5 left-4 right-4"
         }`}
       >
         <nav
           className={`
-            bg-white/75 dark:bg-black/75
+            bg-white/80 dark:bg-black/80
             backdrop-blur-2xl
             saturate-180
             border border-black/10 dark:border-white/15
             shadow-appleHover
-            flex items-center justify-between px-5 py-2.5
-            w-full max-w-md mx-auto
+            flex items-center justify-around px-3 py-2
+            w-full max-w-md mx-auto relative
             transition-all duration-500
             ${isScrolled ? "rounded-none rounded-t-3xl pb-safe" : "rounded-full"}
           `}
         >
+          {/* Home */}
           <Link
             href="/"
-            className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors"
+            className="w-14 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-colors shrink-0 py-1"
           >
             <Home className="w-5 h-5" />
-            <span className="text-[10px] font-semibold">Home</span>
+            <span className="text-[10px] font-medium leading-none tracking-tight">Home</span>
           </Link>
 
+          {/* Drives / Events */}
           <Link
             href="/events"
-            className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors"
+            className="w-14 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-colors shrink-0 py-1"
           >
             <Calendar className="w-5 h-5" />
-            <span className="text-[10px] font-semibold">Drives</span>
+            <span className="text-[10px] font-medium leading-none tracking-tight">Drives</span>
           </Link>
 
-          {/* Floating Center Donate FAB */}
-          <div className="relative -top-4">
+          {/* Symmetrical Floating Center Donate FAB */}
+          <div className="relative -top-5 shrink-0 -my-4 flex items-center justify-center">
             <Link
               href="/donate"
-              className="flex items-center justify-center w-14 h-14 bg-primary hover:bg-red-600 text-white rounded-full shadow-apple hover:scale-105 active:scale-95 transition-all"
+              className="flex items-center justify-center w-14 h-14 bg-primary hover:bg-red-600 text-white rounded-full shadow-apple border-4 border-background hover:scale-105 active:scale-95 transition-all"
               aria-label="Donate Now"
             >
               <Heart className="w-6 h-6 fill-white" />
             </Link>
           </div>
 
+          {/* AI Assistant */}
           <button
             onClick={toggleChatbot}
-            className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors"
+            className="w-14 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-colors shrink-0 py-1"
             aria-label="AI Chat Assistant"
           >
             <MessageSquare className="w-5 h-5" />
-            <span className="text-[10px] font-semibold">AI Assistant</span>
+            <span className="text-[10px] font-medium leading-none tracking-tight">AI Assistant</span>
           </button>
 
+          {/* Account */}
           <button
             onClick={handleAccountClick}
-            className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors"
+            className="w-14 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-colors shrink-0 py-1"
             aria-label="Account Menu"
           >
             {isSignedIn && user?.imageUrl ? (
@@ -173,7 +177,7 @@ export default function MobileBottomNav() {
             ) : (
               <User className="w-5 h-5" />
             )}
-            <span className="text-[10px] font-semibold">Account</span>
+            <span className="text-[10px] font-medium leading-none tracking-tight">Account</span>
           </button>
         </nav>
       </div>

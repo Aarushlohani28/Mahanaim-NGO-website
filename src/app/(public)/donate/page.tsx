@@ -171,19 +171,19 @@ export default function DonatePage() {
   };
 
   return (
-    <div className="bg-cream-100 py-12 md:py-20 min-h-screen">
+    <div className="bg-background text-foreground py-12 md:py-20 min-h-screen border-b border-border/40 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-500/10 text-gold-600 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-4 h-4 text-gold-500" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/80 text-muted-foreground border border-black/5 dark:border-white/10 text-xs font-semibold uppercase tracking-wider shadow-apple">
+            <Sparkles className="w-4 h-4 text-primary" />
             <span>Support Mahanaim Miraj NGO</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-brandDark tracking-tight">
-            Make an Impact <span className="text-gold-500">Today</span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
+            Make an Impact <span className="text-primary italic font-serif font-normal">Today</span>
           </h1>
-          <p className="text-gray-600 text-base leading-relaxed">
+          <p className="text-muted-foreground text-base leading-relaxed font-normal">
             Your generous contribution directly funds safe shelter, warm meals, healthcare, and schooling for abandoned children across Miraj.
           </p>
         </div>
@@ -192,31 +192,31 @@ export default function DonatePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Main Donation Form */}
-          <div className="lg:col-span-7 bg-white p-6 sm:p-10 rounded-3xl border border-cream-200 shadow-xl space-y-8">
+          <div className="lg:col-span-7 bg-card/90 dark:bg-card/70 backdrop-blur-2xl p-6 sm:p-10 rounded-3xl border border-black/5 dark:border-white/10 shadow-apple space-y-8">
 
             {/* Authentication Status Banner */}
             {isLoaded && (
               <div>
                 {isSignedIn && user ? (
-                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-emerald-900">
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-emerald-600 dark:text-emerald-400">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                       <div>
                         <span className="font-bold block">Authenticated as {user.fullName || user.firstName}</span>
-                        <span className="text-emerald-700">{user.primaryEmailAddress?.emailAddress}</span>
+                        <span className="text-muted-foreground">{user.primaryEmailAddress?.emailAddress}</span>
                       </div>
                     </div>
-                    <span className="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    <span className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                       Verified User
                     </span>
                   </div>
                 ) : (
-                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-900">
+                  <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-600 dark:text-amber-400">
                     <div className="flex items-center gap-2">
-                      <Lock className="w-5 h-5 text-amber-600 shrink-0" />
+                      <Lock className="w-5 h-5 text-amber-500 shrink-0" />
                       <div>
                         <span className="font-bold block">Sign-in Required</span>
-                        <span className="text-amber-800">You must log in with Google before donating.</span>
+                        <span className="text-muted-foreground">You must log in with Google before donating.</span>
                       </div>
                     </div>
                     <button
@@ -234,7 +234,7 @@ export default function DonatePage() {
               
               {/* Step 1: Select Amount */}
               <div className="space-y-3">
-                <label className="block font-bold text-gray-900 text-sm">
+                <label className="block font-bold text-foreground text-sm">
                   1. Select Donation Amount (₹ INR)
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
@@ -245,8 +245,8 @@ export default function DonatePage() {
                       onClick={() => handleSelectPreset(val)}
                       className={`py-3 rounded-2xl text-sm font-bold border transition-all ${
                         amount === val && !customAmount
-                          ? "bg-brandRed-500 text-white border-brandRed-500 shadow-md scale-105"
-                          : "bg-cream-50 text-gray-700 border-cream-300 hover:border-brandRed-500"
+                          ? "bg-primary text-white border-primary shadow-apple scale-105"
+                          : "bg-secondary/60 hover:bg-secondary text-foreground border-black/5 dark:border-white/10 hover:border-primary"
                       }`}
                     >
                       ₹{val.toLocaleString("en-IN")}
@@ -255,7 +255,7 @@ export default function DonatePage() {
                 </div>
 
                 <div className="relative pt-2">
-                  <span className="absolute inset-y-0 left-0 pl-4 top-2 flex items-center text-gray-400 font-bold text-sm">
+                  <span className="absolute inset-y-0 left-0 pl-4 top-2 flex items-center text-muted-foreground font-bold text-sm">
                     ₹
                   </span>
                   <input
@@ -263,44 +263,44 @@ export default function DonatePage() {
                     placeholder="Or enter custom amount in ₹"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
-                    className="w-full pl-9 pr-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-gold-500 focus:bg-white transition-all"
+                    className="w-full pl-9 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   />
                 </div>
               </div>
 
               {/* Step 2: Donor Details */}
               <div className="space-y-4 pt-2">
-                <label className="block font-bold text-gray-900 text-sm">
+                <label className="block font-bold text-foreground text-sm">
                   2. Donor Information
                 </label>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Full Name *</label>
+                    <label className="text-xs font-semibold text-muted-foreground block mb-1">Full Name *</label>
                     <div className="relative">
-                      <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                      <User className="w-4 h-4 text-muted-foreground absolute left-3.5 top-3.5" />
                       <input
                         type="text"
                         required
                         placeholder="e.g. Rajesh Sharma"
                         value={donorName}
                         onChange={(e) => setDonorName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500 focus:bg-white transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">Email Address *</label>
+                    <label className="text-xs font-semibold text-muted-foreground block mb-1">Email Address *</label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                      <Mail className="w-4 h-4 text-muted-foreground absolute left-3.5 top-3.5" />
                       <input
                         type="email"
                         required
                         placeholder="rajesh@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500 focus:bg-white transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
@@ -308,36 +308,36 @@ export default function DonatePage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-800 block mb-1">
+                    <label className="text-xs font-bold text-foreground block mb-1">
                       Phone Number (Compulsory) *
                     </label>
                     <div className="relative">
-                      <Phone className="w-4 h-4 text-gold-600 absolute left-3.5 top-3.5" />
+                      <Phone className="w-4 h-4 text-primary absolute left-3.5 top-3.5" />
                       <input
                         type="tel"
                         required
                         placeholder="+91 9876543210"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-cream-50 border-2 border-gold-400/50 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:bg-white transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-background border-2 border-primary/40 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
-                    <span className="text-[10px] text-gray-500 mt-1 block">
+                    <span className="text-[10px] text-muted-foreground mt-1 block">
                       Required for Razorpay payment verification & receipt pings.
                     </span>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">PAN Card (For 80G Tax Receipt)</label>
+                    <label className="text-xs font-semibold text-muted-foreground block mb-1">PAN Card (For 80G Tax Receipt)</label>
                     <div className="relative">
-                      <CreditCard className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                      <CreditCard className="w-4 h-4 text-muted-foreground absolute left-3.5 top-3.5" />
                       <input
                         type="text"
                         placeholder="ABCDE1234F"
                         value={pan}
                         onChange={(e) => setPan(e.target.value.toUpperCase())}
                         maxLength={10}
-                        className="w-full pl-10 pr-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-gold-500 focus:bg-white transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
@@ -346,7 +346,7 @@ export default function DonatePage() {
 
               {/* Error Message */}
               {errorMsg && (
-                <div className="p-4 bg-red-50 text-red-600 text-xs font-semibold rounded-2xl border border-red-200">
+                <div className="p-4 bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-semibold rounded-2xl border border-red-500/20">
                   {errorMsg}
                 </div>
               )}
@@ -356,7 +356,7 @@ export default function DonatePage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-brandRed-500 hover:bg-brandRed-600 text-white font-bold py-4 rounded-full shadow-lg hover:shadow-cardHover text-base transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                  className="w-full bg-primary hover:bg-red-600 text-white font-bold py-4 rounded-full shadow-apple text-base transition-all duration-300 transform hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
                 >
                   <Heart className="w-5 h-5 fill-white" />
                   {loading ? "Initializing Razorpay UPI..." : `Donate ₹${(customAmount ? parseFloat(customAmount) || 0 : amount).toLocaleString("en-IN")} via Dynamic UPI`}
@@ -365,7 +365,7 @@ export default function DonatePage() {
                 <button
                   type="button"
                   onClick={() => openSignIn()}
-                  className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-full shadow-lg text-base transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-foreground text-background font-bold py-4 rounded-full shadow-apple text-base transition-all flex items-center justify-center gap-2"
                 >
                   <LogIn className="w-5 h-5" />
                   Sign In with Google to Donate
@@ -379,33 +379,33 @@ export default function DonatePage() {
           <div className="lg:col-span-5 space-y-6">
             
             {/* 80G Tax Benefit Card */}
-            <div className="bg-sage-600 text-white p-8 rounded-3xl shadow-lg space-y-4">
+            <div className="bg-primary text-white p-8 rounded-3xl shadow-apple space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
                 <FileCheck className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold">100% 80G Tax Benefit</h3>
-              <p className="text-xs text-sage-100 leading-relaxed">
+              <p className="text-xs text-white/90 leading-relaxed font-normal">
                 Mahanaim Miraj NGO is registered under Section 80G of the Income Tax Act. 50% of your donation is eligible for tax deduction. An automated tax receipt will be issued to your email.
               </p>
               <ul className="space-y-2 text-xs font-medium pt-2">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-gold-400" /> Instant Digital Receipt Generated
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300" /> Instant Digital Receipt Generated
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-gold-400" /> Valid for IT Return Filing in India
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300" /> Valid for IT Return Filing in India
                 </li>
               </ul>
             </div>
 
             {/* NGO Direct Contact Box */}
-            <div className="bg-white p-6 rounded-3xl border border-cream-200 shadow-sm space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-gold-600 uppercase">
+            <div className="bg-card border border-black/5 dark:border-white/10 p-6 rounded-3xl shadow-apple space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase">
                 <ShieldCheck className="w-4 h-4" /> Need assistance with donation?
               </div>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Contact our Mahanaim Miraj accounts team directly:
               </p>
-              <div className="text-xs font-semibold text-gray-800 space-y-1">
+              <div className="text-xs font-semibold text-foreground space-y-1">
                 <div>📞 +91 98765 43210</div>
                 <div>✉️ donate@mahanaimmiraj.org</div>
               </div>
