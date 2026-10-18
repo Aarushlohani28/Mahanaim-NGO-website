@@ -211,13 +211,22 @@ let localEventsStore: NGOEvent[] = [...INITIAL_EVENTS];
 let localGalleryStore: GalleryItem[] = [...INITIAL_GALLERY];
 let localDonationsStore: DonationRecord[] = [];
 
+// Helper to safely retrieve admin token in client or server context
+function getStoredAdminToken(explicitToken?: string): string {
+  if (explicitToken) return explicitToken;
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("mahanaim_admin_token") || "";
+  }
+  return "";
+}
+
 /* --- CAUSES CRUD --- */
 export async function getCauses(): Promise<CauseItem[]> {
   try {
     const res = await fetch("/api/causes", { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
-      if (data.causes && data.causes.length > 0) return data.causes;
+      if (Array.isArray(data.causes) && data.causes.length > 0) return data.causes;
     }
   } catch (err) {
     console.warn("API /api/causes fetch error, fallback used:", err);
@@ -225,7 +234,11 @@ export async function getCauses(): Promise<CauseItem[]> {
   return localCausesStore;
 }
 
-export async function addCause(causeData: Omit<CauseItem, "id" | "createdAt">): Promise<CauseItem> {
+export async function addCause(
+  causeData: Omit<CauseItem, "id" | "createdAt">,
+  adminToken?: string
+): Promise<CauseItem> {
+  const token = getStoredAdminToken(adminToken);
   const newCause: CauseItem = {
     ...causeData,
     id: `cause-${Date.now()}`,
@@ -233,9 +246,12 @@ export async function addCause(causeData: Omit<CauseItem, "id" | "createdAt">): 
   };
 
   try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
     const res = await fetch("/api/causes", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(causeData),
     });
     if (res.ok) {
@@ -244,23 +260,75 @@ export async function addCause(causeData: Omit<CauseItem, "id" | "createdAt">): 
         localCausesStore.unshift(data.cause);
         return data.cause;
       }
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
     }
   } catch (err) {
-    console.warn("API /api/causes POST error, fallback used:", err);
+    console.warn("API /api/causes POST error:", err);
+    throw err;
   }
 
   localCausesStore.unshift(newCause);
   return newCause;
 }
 
-export async function deleteCause(id: string): Promise<boolean> {
+export async function updateCause(
+  id: string,
+  updates: Partial<Omit<CauseItem, "id" | "createdAt">>,
+  adminToken?: string
+): Promise<CauseItem> {
+  const token = getStoredAdminToken(adminToken);
+  try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch("/api/causes", {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ id, ...updates }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.cause) {
+        localCausesStore = localCausesStore.map((c) => (c.id === id ? { ...c, ...data.cause } : c));
+        return data.cause;
+      }
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
+    }
+  } catch (err) {
+    console.warn("API /api/causes PATCH error:", err);
+    throw err;
+  }
+
+  localCausesStore = localCausesStore.map((c) => (c.id === id ? { ...c, ...updates } : c));
+  const found = localCausesStore.find((c) => c.id === id);
+  if (found) return found;
+  throw new Error("Cause not found");
+}
+
+export async function deleteCause(id: string, adminToken?: string): Promise<boolean> {
+  const token = getStoredAdminToken(adminToken);
   localCausesStore = localCausesStore.filter((c) => c.id !== id);
   try {
-    const res = await fetch(`/api/causes?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    return res.ok;
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`/api/causes?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
+    }
+    return true;
   } catch (err) {
     console.warn("API /api/causes DELETE error:", err);
-    return true;
+    throw err;
   }
 }
 
@@ -280,8 +348,10 @@ export async function getEvents(): Promise<NGOEvent[]> {
 
 export async function addNGOEvent(
   eventData: Omit<NGOEvent, "id" | "createdAt">,
-  imageFile?: File | null
+  imageFile?: File | null,
+  adminToken?: string
 ): Promise<NGOEvent> {
+  const token = getStoredAdminToken(adminToken);
   const finalImageUrl = eventData.imageUrl || "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000&auto=format&fit=crop";
 
   const newEvent: NGOEvent = {
@@ -292,9 +362,12 @@ export async function addNGOEvent(
   };
 
   try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
     const res = await fetch("/api/events", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({ ...eventData, imageUrl: finalImageUrl }),
     });
 
@@ -304,23 +377,38 @@ export async function addNGOEvent(
         localEventsStore.unshift(data.event);
         return data.event;
       }
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
     }
   } catch (err) {
-    console.warn("API /api/events POST error, fallback used:", err);
+    console.warn("API /api/events POST error:", err);
+    throw err;
   }
 
   localEventsStore.unshift(newEvent);
   return newEvent;
 }
 
-export async function deleteNGOEvent(id: string): Promise<boolean> {
+export async function deleteNGOEvent(id: string, adminToken?: string): Promise<boolean> {
+  const token = getStoredAdminToken(adminToken);
   localEventsStore = localEventsStore.filter((e) => e.id !== id);
   try {
-    const res = await fetch(`/api/events?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    return res.ok;
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`/api/events?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
+    }
+    return true;
   } catch (err) {
     console.warn("API /api/events DELETE error:", err);
-    return true;
+    throw err;
   }
 }
 
@@ -338,7 +426,11 @@ export async function getGallery(): Promise<GalleryItem[]> {
   return localGalleryStore;
 }
 
-export async function addGalleryItem(itemData: Omit<GalleryItem, "id" | "createdAt">): Promise<GalleryItem> {
+export async function addGalleryItem(
+  itemData: Omit<GalleryItem, "id" | "createdAt">,
+  adminToken?: string
+): Promise<GalleryItem> {
+  const token = getStoredAdminToken(adminToken);
   const newItem: GalleryItem = {
     ...itemData,
     id: `gal-${Date.now()}`,
@@ -346,9 +438,12 @@ export async function addGalleryItem(itemData: Omit<GalleryItem, "id" | "created
   };
 
   try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
     const res = await fetch("/api/gallery", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(itemData),
     });
 
@@ -358,23 +453,38 @@ export async function addGalleryItem(itemData: Omit<GalleryItem, "id" | "created
         localGalleryStore.unshift(data.item);
         return data.item;
       }
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
     }
   } catch (err) {
-    console.warn("API /api/gallery POST error, fallback used:", err);
+    console.warn("API /api/gallery POST error:", err);
+    throw err;
   }
 
   localGalleryStore.unshift(newItem);
   return newItem;
 }
 
-export async function deleteGalleryItem(id: string): Promise<boolean> {
+export async function deleteGalleryItem(id: string, adminToken?: string): Promise<boolean> {
+  const token = getStoredAdminToken(adminToken);
   localGalleryStore = localGalleryStore.filter((g) => g.id !== id);
   try {
-    const res = await fetch(`/api/gallery?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    return res.ok;
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`/api/gallery?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server returned ${res.status}`);
+    }
+    return true;
   } catch (err) {
     console.warn("API /api/gallery DELETE error:", err);
-    return true;
+    throw err;
   }
 }
 

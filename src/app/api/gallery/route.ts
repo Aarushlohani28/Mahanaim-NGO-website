@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/supabase";
 import { requireAdminAuth } from "@/lib/adminAuth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const rows = await sql`

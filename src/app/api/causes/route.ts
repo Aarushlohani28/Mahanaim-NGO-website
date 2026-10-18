@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/supabase";
 import { requireAdminAuth } from "@/lib/adminAuth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const rows = await sql`
@@ -92,3 +94,55 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: err.message || "Failed to delete cause" }, { status: 500 });
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  const authError = requireAdminAuth(req);
+  if (authError) return authError;
+
+  try {
+    const body = await req.json();
+    const { id, title, description, goalAmount, raisedAmount, imageURL } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing cause id" }, { status: 400 });
+    }
+
+    await sql`
+      UPDATE causes
+      SET
+        title = COALESCE(${title ?? null}, title),
+        description = COALESCE(${description ?? null}, description),
+        goal_amount = COALESCE(${goalAmount !== undefined ? Number(goalAmount) : null}, goal_amount),
+        raised_amount = COALESCE(${raisedAmount !== undefined ? Number(raisedAmount) : null}, raised_amount),
+        image_url = COALESCE(${imageURL ?? null}, image_url)
+      WHERE id = ${id}
+    `;
+
+    const rows = await sql`
+      SELECT id, title, description, goal_amount, raised_amount, image_url, created_at
+      FROM causes
+      WHERE id = ${id}
+    `;
+
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "Cause not found" }, { status: 404 });
+    }
+
+    const r = rows[0];
+    const updatedCause = {
+      id: r.id,
+      title: r.title,
+      description: r.description,
+      goalAmount: Number(r.goal_amount) || 0,
+      raisedAmount: Number(r.raised_amount) || 0,
+      imageURL: r.image_url,
+      createdAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
+    };
+
+    return NextResponse.json({ success: true, cause: updatedCause });
+  } catch (err: any) {
+    console.error("Supabase PATCH /api/causes error:", err);
+    return NextResponse.json({ error: err.message || "Failed to update cause" }, { status: 500 });
+  }
+}
+

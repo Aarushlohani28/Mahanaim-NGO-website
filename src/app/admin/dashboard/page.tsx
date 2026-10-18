@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { 
   getEvents, addNGOEvent, deleteNGOEvent, NGOEvent,
-  getCauses, addCause, deleteCause, CauseItem,
+  getCauses, addCause, updateCause, deleteCause, CauseItem,
   getGallery, addGalleryItem, deleteGalleryItem, GalleryItem,
   getDonations, DonationRecord,
   getUsers, ClerkUserItem,
@@ -60,6 +60,16 @@ export default function AdminDashboardPage() {
   const [causeGoal, setCauseGoal] = useState<number>(100000);
   const [causeRaised, setCauseRaised] = useState<number>(0);
   const [causeImageFile, setCauseImageFile] = useState<File | null>(null);
+
+  // Edit Cause Modal State
+  const [editingCause, setEditingCause] = useState<CauseItem | null>(null);
+  const [editCauseTitle, setEditCauseTitle] = useState("");
+  const [editCauseDesc, setEditCauseDesc] = useState("");
+  const [editCauseGoal, setEditCauseGoal] = useState<number>(100000);
+  const [editCauseRaised, setEditCauseRaised] = useState<number>(0);
+  const [editCauseImageFile, setEditCauseImageFile] = useState<File | null>(null);
+  const [savingCauseEdit, setSavingCauseEdit] = useState(false);
+
 
   // 2. Event Form State
   const [evtTitle, setEvtTitle] = useState("");
@@ -278,20 +288,25 @@ export default function AdminDashboardPage() {
     
     setPublishing(true);
     setSuccessMsg("");
+    const token = getAdminToken();
     try {
       const uploadedUrl = await uploadImageToImgBB(causeImageFile);
       
-      await addCause({
-        title: causeTitle,
-        description: causeDesc,
-        goalAmount: Number(causeGoal) || 100000,
-        raisedAmount: Number(causeRaised) || 0,
-        imageURL: uploadedUrl,
-      });
-      setSuccessMsg("🎉 Cause successfully published!");
+      await addCause(
+        {
+          title: causeTitle,
+          description: causeDesc,
+          goalAmount: Number(causeGoal) || 100000,
+          raisedAmount: Number(causeRaised) || 0,
+          imageURL: uploadedUrl,
+        },
+        token || ""
+      );
+      setSuccessMsg("🎉 Cause successfully published and live on the viewer site!");
       setCauseTitle("");
       setCauseDesc("");
       setCauseImageFile(null);
+      setTimeout(() => setSuccessMsg(""), 5000);
       loadDashboardData();
     } catch (err: any) {
       console.error("Cause creation error:", err);
@@ -301,10 +316,67 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleOpenEditCause = (cause: CauseItem) => {
+    setEditingCause(cause);
+    setEditCauseTitle(cause.title);
+    setEditCauseDesc(cause.description);
+    setEditCauseGoal(cause.goalAmount);
+    setEditCauseRaised(cause.raisedAmount);
+    setEditCauseImageFile(null);
+  };
+
+  const handleCloseEditCause = () => {
+    setEditingCause(null);
+    setEditCauseImageFile(null);
+  };
+
+  const handleSaveEditCause = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCause) return;
+    setSavingCauseEdit(true);
+    const token = getAdminToken();
+    try {
+      let finalImageUrl = editingCause.imageURL;
+      if (editCauseImageFile) {
+        finalImageUrl = await uploadImageToImgBB(editCauseImageFile);
+      }
+
+      await updateCause(
+        editingCause.id,
+        {
+          title: editCauseTitle,
+          description: editCauseDesc,
+          goalAmount: Number(editCauseGoal) || 0,
+          raisedAmount: Number(editCauseRaised) || 0,
+          imageURL: finalImageUrl,
+        },
+        token || ""
+      );
+
+      setSuccessMsg("✨ Cause updated successfully and live on the viewer site!");
+      setTimeout(() => setSuccessMsg(""), 5000);
+      handleCloseEditCause();
+      loadDashboardData();
+    } catch (err: any) {
+      console.error("Failed to update cause:", err);
+      alert(err.message || "Failed to update cause. Please check your admin login.");
+    } finally {
+      setSavingCauseEdit(false);
+    }
+  };
+
   const handleDeleteCause = async (id: string) => {
     if (confirm("Are you sure you want to delete this cause?")) {
-      await deleteCause(id);
-      loadDashboardData();
+      const token = getAdminToken();
+      try {
+        await deleteCause(id, token || "");
+        setSuccessMsg("Cause deleted successfully from database and viewer site.");
+        setTimeout(() => setSuccessMsg(""), 4000);
+        loadDashboardData();
+      } catch (err: any) {
+        console.error("Cause deletion error:", err);
+        alert(err.message || "Failed to delete cause.");
+      }
     }
   };
 
@@ -317,24 +389,30 @@ export default function AdminDashboardPage() {
     }
     setPublishing(true);
     setSuccessMsg("");
+    const token = getAdminToken();
     try {
       const uploadedUrl = await uploadImageToImgBB(evtImageFile);
       
-      await addNGOEvent({
-        title: evtTitle,
-        date: evtDate,
-        category: evtCategory,
-        location: evtLocation,
-        description: evtDesc,
-        imageUrl: uploadedUrl,
-        raised: 0,
-        target: Number(evtTarget) || 50000,
-      });
+      await addNGOEvent(
+        {
+          title: evtTitle,
+          date: evtDate,
+          category: evtCategory,
+          location: evtLocation,
+          description: evtDesc,
+          imageUrl: uploadedUrl,
+          raised: 0,
+          target: Number(evtTarget) || 50000,
+        },
+        null,
+        token || ""
+      );
       setSuccessMsg("🎉 Drive/Event successfully published!");
       setEvtTitle("");
       setEvtDate("");
       setEvtDesc("");
       setEvtImageFile(null);
+      setTimeout(() => setSuccessMsg(""), 5000);
       loadDashboardData();
     } catch (err: any) {
       console.error("Event creation error:", err);
@@ -346,8 +424,16 @@ export default function AdminDashboardPage() {
 
   const handleDeleteEvent = async (id: string) => {
     if (confirm("Are you sure you want to delete this event drive?")) {
-      await deleteNGOEvent(id);
-      loadDashboardData();
+      const token = getAdminToken();
+      try {
+        await deleteNGOEvent(id, token || "");
+        setSuccessMsg("Event deleted successfully.");
+        setTimeout(() => setSuccessMsg(""), 4000);
+        loadDashboardData();
+      } catch (err: any) {
+        console.error("Event deletion error:", err);
+        alert(err.message || "Failed to delete event.");
+      }
     }
   };
 
@@ -360,16 +446,21 @@ export default function AdminDashboardPage() {
     }
     setPublishing(true);
     setSuccessMsg("");
+    const token = getAdminToken();
     try {
       const uploadedUrl = await uploadImageToImgBB(galImageFile);
       
-      await addGalleryItem({
-        imageURL: uploadedUrl,
-        hoverDescription: galHoverDesc,
-      });
+      await addGalleryItem(
+        {
+          imageURL: uploadedUrl,
+          hoverDescription: galHoverDesc,
+        },
+        token || ""
+      );
       setSuccessMsg("🎉 Photo added to Gallery!");
       setGalImageFile(null);
       setGalHoverDesc("");
+      setTimeout(() => setSuccessMsg(""), 5000);
       loadDashboardData();
     } catch (err: any) {
       console.error("Gallery creation error:", err);
@@ -381,8 +472,16 @@ export default function AdminDashboardPage() {
 
   const handleDeleteGallery = async (id: string) => {
     if (confirm("Are you sure you want to delete this photo from the gallery?")) {
-      await deleteGalleryItem(id);
-      loadDashboardData();
+      const token = getAdminToken();
+      try {
+        await deleteGalleryItem(id, token || "");
+        setSuccessMsg("Photo removed from gallery.");
+        setTimeout(() => setSuccessMsg(""), 4000);
+        loadDashboardData();
+      } catch (err: any) {
+        console.error("Gallery deletion error:", err);
+        alert(err.message || "Failed to delete gallery item.");
+      }
     }
   };
 
@@ -618,12 +717,20 @@ export default function AdminDashboardPage() {
                       <span>Raised: ₹{c.raisedAmount.toLocaleString("en-IN")}</span>
                       <span>Goal: ₹{c.goalAmount.toLocaleString("en-IN")}</span>
                     </div>
-                    <button
-                      onClick={() => handleDeleteCause(c.id)}
-                      className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 transition-colors border border-red-200 mt-2"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" /> Delete Cause
-                    </button>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => handleOpenEditCause(c)}
+                        className="flex-1 bg-brandTeal-50 hover:bg-brandTeal-100 text-brandTeal-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors border border-brandTeal-200"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCause(c.id)}
+                        className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors border border-red-200"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1548,6 +1655,108 @@ export default function AdminDashboardPage() {
 
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* EDIT CAUSE MODAL */}
+      {editingCause && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl border border-cream-200 shadow-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-cream-200 pb-4">
+              <div className="flex items-center gap-2 text-brandDark">
+                <Edit3 className="w-5 h-5 text-gold-500" />
+                <h3 className="text-lg font-extrabold">Edit NGO Cause</h3>
+              </div>
+              <button
+                onClick={handleCloseEditCause}
+                className="text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-cream-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditCause} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Cause Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={editCauseTitle}
+                  onChange={(e) => setEditCauseTitle(e.target.value)}
+                  className="w-full px-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Goal Amount (₹ INR) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={editCauseGoal}
+                    onChange={(e) => setEditCauseGoal(Number(e.target.value))}
+                    className="w-full px-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Already Raised (₹ INR)</label>
+                  <input
+                    type="number"
+                    value={editCauseRaised}
+                    onChange={(e) => setEditCauseRaised(Number(e.target.value))}
+                    className="w-full px-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  Replace Image (Leave empty to keep existing image)
+                </label>
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="relative h-16 w-24 rounded-xl overflow-hidden border border-cream-300 shrink-0">
+                    <Image src={editingCause.imageURL} alt={editingCause.title} fill className="object-cover" />
+                  </div>
+                  <span className="text-xs text-gray-500 italic">Current Cause Image</span>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setEditCauseImageFile(e.target.files?.[0] || null)}
+                  className="w-full px-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Description *</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={editCauseDesc}
+                  onChange={(e) => setEditCauseDesc(e.target.value)}
+                  className="w-full px-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-cream-200">
+                <button
+                  type="button"
+                  onClick={handleCloseEditCause}
+                  className="px-5 py-2.5 rounded-full border border-cream-300 text-gray-700 hover:bg-cream-100 font-bold text-xs transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCauseEdit}
+                  className="bg-gold-500 hover:bg-gold-600 text-white font-bold px-6 py-2.5 rounded-full text-xs transition-all shadow-md flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{savingCauseEdit ? "Saving Changes..." : "Save Cause Changes"}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
