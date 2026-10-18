@@ -1,11 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { CheckCircle2, User, Phone, Mail, MapPin, Briefcase, Calendar, HeartHandshake, FileText, AlertCircle, Loader2 } from "lucide-react";
+import Link from "next/link";
+import {
+  CheckCircle2,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Briefcase,
+  Calendar,
+  HeartHandshake,
+  FileText,
+  AlertCircle,
+  Loader2,
+  Sun,
+  Moon,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+} from "lucide-react";
 import { AVAILABLE_DAYS, AVAILABILITY_TIMES, AREAS_OF_INTEREST } from "@/lib/dataStore";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function VolunteerRegistrationPage() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -47,6 +73,10 @@ export default function VolunteerRegistrationPage() {
     });
   };
 
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -76,40 +106,96 @@ export default function VolunteerRegistrationPage() {
 
   if (success) {
     return (
-      <div className="min-h-[70vh] bg-cream-50 flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6 shadow-sm">
-          <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+      <main className="min-h-[75vh] bg-background text-foreground flex flex-col items-center justify-center p-6 text-center transition-colors duration-300">
+        <div className="bg-card text-card-foreground max-w-lg w-full p-8 sm:p-10 rounded-3xl border border-border shadow-apple space-y-6">
+          <div className="w-20 h-20 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto shadow-sm">
+            <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              Thank You for Volunteering!
+            </h1>
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+              Your application has been received. Our team will review your details and contact you soon regarding upcoming community programs in Miraj.
+            </p>
+          </div>
+          <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/"
+              className="bg-primary hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-full shadow-apple text-sm transition-all duration-200 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+            >
+              <span>Return to Home</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setSuccess(false);
+                setFormData({
+                  name: "",
+                  phone: "",
+                  email: "",
+                  address: "",
+                  availableDays: [],
+                  availabilityTime: "Flexible",
+                  areasOfInterest: [],
+                  skills: "",
+                  occupation: "",
+                  message: "",
+                  consentToContact: false,
+                });
+              }}
+              className="bg-secondary hover:bg-secondary/80 text-foreground font-semibold py-3 px-6 rounded-full border border-border text-sm transition-all flex items-center justify-center"
+            >
+              Submit Another Application
+            </button>
+          </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-brandDark mb-4">
-          Thank you for volunteering!
-        </h1>
-        <p className="text-gray-600 max-w-md mx-auto text-lg mb-8">
-          Your application has been received. Our team will review your details and contact you soon regarding upcoming opportunities.
-        </p>
-        <button
-          onClick={() => window.location.href = "/"}
-          className="bg-brandTeal-600 hover:bg-brandTeal-700 text-white font-bold py-3 px-8 rounded-full shadow-md transition-all"
-        >
-          Return to Home
-        </button>
-      </div>
+      </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-cream-50 py-12 lg:py-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background text-foreground py-12 lg:py-20 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 bg-brandTeal-50 text-brandTeal-700 border border-brandTeal-200 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-            <HeartHandshake className="w-4 h-4" /> Become a Volunteer
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <div className="inline-flex items-center gap-2 bg-secondary text-foreground border border-border px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
+              <HeartHandshake className="w-4 h-4 text-primary" />
+              <span>Become a Volunteer</span>
+            </div>
+
+            {/* In-page Theme Toggle Button */}
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-secondary/80 hover:bg-secondary text-foreground border border-border transition-all shadow-sm active:scale-95"
+                title={resolvedTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                aria-label="Toggle theme on volunteer page"
+              >
+                {resolvedTheme === "dark" ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="hidden sm:inline">Light Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-slate-700" />
+                    <span className="hidden sm:inline">Dark Mode</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-brandDark tracking-tight mb-6">
+
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
             Join Our Mission
           </h1>
-          <p className="text-gray-600 text-lg md:text-xl">
-            Your time and skills can make a profound difference in someone's life. Join the Mahanaim family and help us spread love and peace.
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed">
+            Your time and skills make a profound difference in someone's life. Join the Mahanaim family and help us spread love and peace.
           </p>
         </div>
 
@@ -117,46 +203,51 @@ export default function VolunteerRegistrationPage() {
           
           {/* Informational Sidebar (Desktop) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-3xl p-6 md:p-8 border border-cream-200 shadow-sm sticky top-24">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Why Volunteer?</h3>
+            <div className="bg-card text-card-foreground rounded-3xl p-6 md:p-8 border border-border shadow-apple sticky top-24 transition-colors">
+              <h3 className="text-xl font-bold text-foreground mb-4">Why Volunteer?</h3>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <HeartHandshake className="w-4 h-4 text-gold-700" />
+                  <div className="w-8 h-8 rounded-full bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <HeartHandshake className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Direct Impact</h4>
-                    <p className="text-xs text-gray-600 mt-0.5">Help feed, educate, and empower vulnerable communities directly.</p>
+                    <h4 className="font-bold text-foreground text-sm">Direct Impact</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">Help feed, educate, and empower vulnerable communities directly.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-brandTeal-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <User className="w-4 h-4 text-brandTeal-700" />
+                  <div className="w-8 h-8 rounded-full bg-teal-500/10 dark:bg-teal-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <User className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Grow Personally</h4>
-                    <p className="text-xs text-gray-600 mt-0.5">Develop new skills, gain experience, and build empathy.</p>
+                    <h4 className="font-bold text-foreground text-sm">Grow Personally</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">Develop new skills, gain experience, and build empathy.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-blue-700" />
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Join a Community</h4>
-                    <p className="text-xs text-gray-600 mt-0.5">Meet like-minded individuals dedicated to social good.</p>
+                    <h4 className="font-bold text-foreground text-sm">Join a Community</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">Meet like-minded individuals dedicated to social good.</p>
                   </div>
                 </li>
               </ul>
               
-              <hr className="my-6 border-cream-200" />
+              <hr className="my-6 border-border" />
               
-              <div className="bg-cream-50 p-4 rounded-2xl border border-cream-200">
-                <h4 className="font-bold text-brandDark text-sm mb-2">Have Questions?</h4>
-                <p className="text-xs text-gray-600 mb-3">
-                  If you need help or have questions about volunteering, please contact us.
+              <div className="bg-secondary/40 dark:bg-secondary/30 p-4 rounded-2xl border border-border space-y-2">
+                <h4 className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-primary" /> Have Questions?
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  If you need help or have questions about volunteering, contact our team:
                 </p>
-                <a href="tel:+919876543210" className="flex items-center gap-2 text-brandTeal-600 font-bold text-sm hover:text-brandTeal-800">
+                <a
+                  href="tel:+919876543210"
+                  className="inline-flex items-center gap-2 text-primary font-bold text-xs sm:text-sm hover:underline pt-1"
+                >
                   <Phone className="w-4 h-4" /> +91 98765 43210
                 </a>
               </div>
@@ -165,16 +256,22 @@ export default function VolunteerRegistrationPage() {
 
           {/* Registration Form */}
           <div className="lg:col-span-8">
-            <div className="bg-white rounded-3xl p-6 md:p-10 border border-cream-200 shadow-xl relative overflow-hidden">
-              {/* Decorative background element */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gold-50 rounded-full blur-3xl -z-10 opacity-60 translate-x-1/2 -translate-y-1/2"></div>
+            <div className="bg-card text-card-foreground rounded-3xl p-6 md:p-10 border border-border shadow-apple relative overflow-hidden transition-colors">
+              {/* Decorative subtle background aura */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
               
-              <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b border-cream-200 pb-4">
-                Volunteer Application Form
-              </h2>
+              <div className="flex items-center justify-between border-b border-border pb-4 mb-8">
+                <h2 className="text-2xl font-bold text-foreground">
+                  Volunteer Application Form
+                </h2>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  <span>Free Registration</span>
+                </div>
+              </div>
 
               {errorMsg && (
-                <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3 text-red-800">
+                <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-2xl flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-500" />
                   <div>
                     <h4 className="font-bold text-sm">Submission Error</h4>
@@ -187,15 +284,17 @@ export default function VolunteerRegistrationPage() {
                 
                 {/* SECTION 1: Personal Information */}
                 <section>
-                  <h3 className="text-sm font-bold text-brandTeal-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
                     <User className="w-4 h-4" /> 1. Personal Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-foreground mb-1.5">
+                        Full Name <span className="text-primary">*</span>
+                      </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                          <User className="h-4 w-4 text-gray-400" />
+                          <User className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <input
                           type="text"
@@ -203,17 +302,19 @@ export default function VolunteerRegistrationPage() {
                           required
                           value={formData.name}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all"
+                          className="w-full pl-10 pr-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                           placeholder="e.g. Rahul Sharma"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5">Phone Number <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-foreground mb-1.5">
+                        Phone Number <span className="text-primary">*</span>
+                      </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                          <Phone className="h-4 w-4 text-gray-400" />
+                          <Phone className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <input
                           type="tel"
@@ -221,34 +322,36 @@ export default function VolunteerRegistrationPage() {
                           required
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all"
+                          className="w-full pl-10 pr-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                           placeholder="e.g. +91 9876543210"
                         />
                       </div>
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5">Email Address</label>
+                      <label className="block text-xs font-bold text-foreground mb-1.5">Email Address</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                          <Mail className="h-4 w-4 text-gray-400" />
+                          <Mail className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <input
                           type="email"
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all"
+                          className="w-full pl-10 pr-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                           placeholder="e.g. rahul@example.com"
                         />
                       </div>
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5">Address / City <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-foreground mb-1.5">
+                        Address / City <span className="text-primary">*</span>
+                      </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3.5 pt-3.5 pointer-events-none">
-                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <textarea
                           name="address"
@@ -256,7 +359,7 @@ export default function VolunteerRegistrationPage() {
                           rows={2}
                           value={formData.address}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all resize-y min-h-[80px]"
+                          className="w-full pl-10 pr-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-y min-h-[80px]"
                           placeholder="Provide your locality and city..."
                         />
                       </div>
@@ -264,15 +367,26 @@ export default function VolunteerRegistrationPage() {
                   </div>
                 </section>
 
-                {/* SECTION 2: Availability */}
+                {/* SECTION 2: Availability (Interactive Day Buttons) */}
                 <section>
-                  <h3 className="text-sm font-bold text-brandTeal-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Calendar className="w-4 h-4" /> 2. Availability
                   </h3>
                   
                   <div className="space-y-5">
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-2.5">Available Days <span className="text-red-500">*</span></label>
+                      <div className="flex items-center justify-between mb-2.5">
+                        <label className="block text-xs font-bold text-foreground">
+                          Available Days <span className="text-primary">*</span>
+                        </label>
+                        <span className="text-[11px] text-muted-foreground">
+                          {formData.availableDays.length > 0
+                            ? `${formData.availableDays.length} selected`
+                            : "Select one or more"}
+                        </span>
+                      </div>
+
+                      {/* Day selection pill buttons with dynamic dark/light theme */}
                       <div className="flex flex-wrap gap-2.5">
                         {AVAILABLE_DAYS.map((day) => {
                           const isSelected = formData.availableDays.includes(day);
@@ -281,10 +395,10 @@ export default function VolunteerRegistrationPage() {
                               type="button"
                               key={day}
                               onClick={() => toggleArrayItem("availableDays", day)}
-                              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                              className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none ${
                                 isSelected 
-                                  ? "bg-brandTeal-600 border-brandTeal-600 text-white shadow-md" 
-                                  : "bg-white border-cream-300 text-gray-600 hover:bg-cream-50 hover:border-brandTeal-300"
+                                  ? "bg-primary border-primary text-white shadow-apple transform scale-[1.02]" 
+                                  : "bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground border-border hover:border-primary/40"
                               }`}
                             >
                               {day}
@@ -293,58 +407,68 @@ export default function VolunteerRegistrationPage() {
                         })}
                       </div>
                       {formData.availableDays.length === 0 && (
-                        <p className="text-[11px] text-amber-600 font-medium mt-2">Please select at least one day.</p>
+                        <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-2">
+                          Please select at least one available day.
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-2.5">Preferred Time Slot</label>
+                      <label className="block text-xs font-bold text-foreground mb-2">Preferred Time Slot</label>
                       <select
                         name="availabilityTime"
                         value={formData.availabilityTime}
                         onChange={handleInputChange}
-                        className="w-full md:w-64 px-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all appearance-none cursor-pointer"
+                        className="w-full md:w-64 px-4 py-3 bg-background border border-border text-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
                       >
                         {AVAILABILITY_TIMES.map((time) => (
-                          <option key={time} value={time}>{time}</option>
+                          <option key={time} value={time} className="bg-card text-foreground">
+                            {time}
+                          </option>
                         ))}
                       </select>
                     </div>
                   </div>
                 </section>
 
-                {/* SECTION 3: Interests */}
+                {/* SECTION 3: Areas of Interest (Interactive Option Buttons) */}
                 <section>
-                  <h3 className="text-sm font-bold text-brandTeal-700 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <HeartHandshake className="w-4 h-4" /> 3. Areas of Interest
-                  </h3>
-                  <label className="block text-xs font-bold text-gray-700 mb-3">What would you like to help with?</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-bold text-primary uppercase tracking-wider flex items-center gap-2">
+                      <HeartHandshake className="w-4 h-4" /> 3. Areas of Interest
+                    </h3>
+                    <span className="text-[11px] text-muted-foreground">
+                      {formData.areasOfInterest.length > 0 ? `${formData.areasOfInterest.length} selected` : "Select all that apply"}
+                    </span>
+                  </div>
+                  <label className="block text-xs font-bold text-foreground mb-3">
+                    What would you like to help with?
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {AREAS_OF_INTEREST.map((interest) => {
                       const isSelected = formData.areasOfInterest.includes(interest);
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={interest}
                           role="checkbox"
                           aria-checked={isSelected}
-                          tabIndex={0}
                           onClick={() => toggleArrayItem("areasOfInterest", interest)}
-                          onKeyDown={(e) => (e.key === " " || e.key === "Enter") && toggleArrayItem("areasOfInterest", interest)}
-                          className={`flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer select-none ${
+                          className={`flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer select-none ${
                             isSelected 
-                              ? "bg-brandTeal-50 border-brandTeal-400" 
-                              : "bg-white border-cream-200 hover:border-brandTeal-200 hover:bg-cream-50/50"
+                              ? "bg-primary/10 dark:bg-primary/15 border-primary text-foreground shadow-sm" 
+                              : "bg-secondary/30 dark:bg-secondary/40 border-border text-muted-foreground hover:text-foreground hover:bg-secondary/70 hover:border-primary/40"
                           }`}
                         >
-                          <div className={`w-5 h-5 rounded border mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
-                            isSelected ? "bg-brandTeal-600 border-brandTeal-600" : "bg-white border-gray-300"
+                          <div className={`w-5 h-5 rounded-lg border mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
+                            isSelected ? "bg-primary border-primary text-white" : "bg-background border-border"
                           }`}>
                             {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                           </div>
-                          <span className={`text-sm font-medium ${isSelected ? "text-brandTeal-900" : "text-gray-700"}`}>
+                          <span className={`text-sm font-medium ${isSelected ? "text-foreground font-semibold" : "text-muted-foreground"}`}>
                             {interest}
                           </span>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -352,48 +476,48 @@ export default function VolunteerRegistrationPage() {
 
                 {/* SECTION 4: About You */}
                 <section>
-                  <h3 className="text-sm font-bold text-brandTeal-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Briefcase className="w-4 h-4" /> 4. About You (Optional)
                   </h3>
                   
                   <div className="space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5">Occupation / Profession</label>
+                        <label className="block text-xs font-bold text-foreground mb-1.5">Occupation / Profession</label>
                         <input
                           type="text"
                           name="occupation"
                           value={formData.occupation}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all"
+                          className="w-full px-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                           placeholder="e.g. Teacher, Student, Doctor..."
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5">Special Skills</label>
+                        <label className="block text-xs font-bold text-foreground mb-1.5">Special Skills</label>
                         <input
                           type="text"
                           name="skills"
                           value={formData.skills}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all"
-                          placeholder="e.g. First aid, Fluency in local languages..."
+                          className="w-full px-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                          placeholder="e.g. First aid, Social work, Teaching..."
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5">Why would you like to volunteer?</label>
+                      <label className="block text-xs font-bold text-foreground mb-1.5">Why would you like to volunteer?</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3.5 pt-3.5 pointer-events-none">
-                          <FileText className="h-4 w-4 text-gray-400" />
+                          <FileText className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <textarea
                           name="message"
                           rows={3}
                           value={formData.message}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:border-brandTeal-500 focus:ring-1 focus:ring-brandTeal-500 transition-all resize-y"
+                          className="w-full pl-10 pr-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-y"
                           placeholder="Share a brief message about your motivation..."
                         />
                       </div>
@@ -402,7 +526,7 @@ export default function VolunteerRegistrationPage() {
                 </section>
 
                 {/* SECTION 5: Consent */}
-                <section className="bg-cream-100/50 p-5 rounded-2xl border border-cream-200">
+                <section className="bg-secondary/40 dark:bg-secondary/30 p-5 rounded-2xl border border-border">
                   <label className="flex items-start gap-3 cursor-pointer select-none group">
                     <div className="mt-0.5">
                       <input
@@ -411,35 +535,43 @@ export default function VolunteerRegistrationPage() {
                         required
                         checked={formData.consentToContact}
                         onChange={handleInputChange}
-                        className="w-5 h-5 rounded border-gray-300 text-brandTeal-600 focus:ring-brandTeal-500 cursor-pointer accent-brandTeal-600"
+                        className="w-5 h-5 rounded border-border text-primary focus:ring-primary cursor-pointer accent-primary"
                       />
                     </div>
                     <div>
-                      <span className="text-sm font-bold text-gray-900 group-hover:text-brandTeal-700 transition-colors">
-                        I agree to be contacted by Mahanaim NGO regarding volunteer opportunities. <span className="text-red-500">*</span>
+                      <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                        I agree to be contacted by Mahanaim NGO regarding volunteer opportunities. <span className="text-primary">*</span>
                       </span>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Your data will be kept secure and used only for volunteer management.
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Your contact data is protected and used strictly for NGO volunteer coordination.
                       </p>
                     </div>
                   </label>
                 </section>
 
-                {/* Submit Action */}
-                <div className="pt-4 flex justify-end">
+                {/* Submit Action (Primary Themed Button) */}
+                <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-xs text-muted-foreground text-center sm:text-left">
+                    <span>Questions? Call </span>
+                    <a href="tel:+919876543210" className="text-primary font-semibold hover:underline">
+                      +91 98765 43210
+                    </a>
+                  </div>
+
                   <button
                     type="submit"
                     disabled={loading || formData.availableDays.length === 0 || !formData.consentToContact}
-                    className="w-full md:w-auto bg-primary hover:bg-rose-700 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-primary hover:bg-rose-600 dark:hover:bg-rose-500 text-white font-bold py-4 px-10 rounded-full shadow-apple hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Submitting...
+                        Submitting Application...
                       </>
                     ) : (
                       <>
-                        Submit Volunteer Application
+                        <span>Submit Volunteer Application</span>
+                        <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </button>
