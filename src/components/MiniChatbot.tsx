@@ -131,7 +131,7 @@ export default function MiniChatbot() {
     return () => window.removeEventListener("toggle-chatbot", handleToggle);
   }, []);
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+919876543210";
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+918788531730";
   const cleanWhatsappNumber = whatsappNumber.startsWith("+")
     ? whatsappNumber
     : `+${whatsappNumber}`;
