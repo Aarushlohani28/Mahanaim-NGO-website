@@ -48,6 +48,66 @@ export interface ClerkUserItem {
   createdAt: string;
 }
 
+export const AVAILABLE_DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+] as const;
+
+export const AVAILABILITY_TIMES = [
+  "Morning",
+  "Afternoon",
+  "Evening",
+  "Flexible",
+] as const;
+
+export const AREAS_OF_INTEREST = [
+  "Education",
+  "Food/Nutrition",
+  "Healthcare",
+  "Event Support",
+  "Fundraising",
+  "Distribution/Relief",
+  "Community Outreach",
+  "Social Media/Content",
+  "Photography/Videography",
+  "Administration",
+  "Other",
+] as const;
+
+export const VOLUNTEER_STATUSES = [
+  "PENDING",
+  "CONTACTED",
+  "APPROVED",
+  "REJECTED",
+  "INACTIVE",
+] as const;
+
+export type VolunteerStatus = (typeof VOLUNTEER_STATUSES)[number];
+
+export interface Volunteer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  availableDays: string[];
+  availabilityTime: string;
+  areasOfInterest: string[];
+  skills: string;
+  occupation: string;
+  message: string;
+  status: VolunteerStatus;
+  adminNotes: string;
+  consentToContact: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Initial seed data
 const INITIAL_CAUSES: CauseItem[] = [
   {
@@ -394,4 +454,88 @@ export async function getUsers(adminToken?: string): Promise<ClerkUserItem[]> {
     console.warn("API /api/users fetch error, returning empty array:", err);
   }
   return [];
+}
+
+/* --- VOLUNTEERS CRUD --- */
+export async function getVolunteers(
+  adminToken?: string,
+  params?: { search?: string; status?: string; day?: string; interest?: string; id?: string }
+): Promise<Volunteer[]> {
+  try {
+    const query = new URLSearchParams();
+    if (params?.search) query.set("search", params.search);
+    if (params?.status && params.status !== "All") query.set("status", params.status);
+    if (params?.day && params.day !== "All") query.set("day", params.day);
+    if (params?.interest && params.interest !== "All") query.set("interest", params.interest);
+    if (params?.id) query.set("id", params.id);
+
+    const headers: HeadersInit = adminToken
+      ? { Authorization: `Bearer ${adminToken}` }
+      : {};
+
+    const url = `/api/volunteers${query.toString() ? `?${query.toString()}` : ""}`;
+    const res = await fetch(url, { cache: "no-store", headers });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.volunteers && Array.isArray(data.volunteers)) return data.volunteers;
+    }
+  } catch (err) {
+    console.warn("API /api/volunteers fetch error:", err);
+  }
+  return [];
+}
+
+export async function registerVolunteer(
+  volunteerData: Omit<Volunteer, "id" | "createdAt" | "updatedAt" | "status" | "adminNotes">
+): Promise<{ success: boolean; message?: string; id?: string }> {
+  try {
+    const res = await fetch("/api/volunteers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(volunteerData),
+    });
+    const data = await res.json();
+    return { success: res.ok, message: data.message || data.error, id: data.id };
+  } catch (err: any) {
+    console.error("registerVolunteer error:", err);
+    return { success: false, message: err.message || "Network error submitting volunteer registration." };
+  }
+}
+
+export async function updateVolunteerAdmin(
+  id: string,
+  updates: { status?: VolunteerStatus; adminNotes?: string },
+  adminToken?: string
+): Promise<boolean> {
+  try {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
+    };
+    const res = await fetch("/api/volunteers", {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ id, ...updates }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.error("updateVolunteerAdmin error:", err);
+    return false;
+  }
+}
+
+export async function deleteVolunteer(id: string, adminToken?: string): Promise<boolean> {
+  try {
+    const headers: HeadersInit = adminToken
+      ? { Authorization: `Bearer ${adminToken}` }
+      : {};
+    const res = await fetch(`/api/volunteers?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers,
+    });
+    return res.ok;
+  } catch (err) {
+    console.error("deleteVolunteer error:", err);
+    return false;
+  }
 }

@@ -1,6 +1,10 @@
 const postgres = require("postgres");
 
-const connectionString = process.env.DATABASE_URL || "postgresql://postgres:BaconEggCheese@28@db.zvbyafopdxtfdqucilgl.supabase.co:5432/postgres";
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  console.error("ERROR: DATABASE_URL environment variable is missing.");
+  process.exit(1);
+}
 const sql = postgres(connectionString);
 
 async function init() {

@@ -1,104 +1,76 @@
-"use client";
-
-import React, { useRef } from "react";
-import { BookOpen, Utensils, HeartPulse, ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
+import { BookOpen, Utensils, HeartPulse, CheckCircle2 } from "lucide-react";
 
 export default function ServicesGrid() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const services = [
     {
       id: "s1",
-      code: "01 // EDUCATION",
+      step: "01",
       title: "Daily Education & Tutoring",
-      desc: "Every child at Mahanaim Miraj attends the local district school. We cover 100% of tuition, uniforms, and after-school tutoring for 42 children.",
+      desc: "Every child at Mahanaim Miraj attends the local district school. We cover 100% of tuition fees, uniforms, textbooks, and provide daily after-school tutoring for 42 residential children.",
       icon: BookOpen,
-      color: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+      iconColor: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
+      benefits: ["100% School Enrollment", "Daily Homework Tutoring", "Computer & Literacy Classes"],
     },
     {
       id: "s2",
-      code: "02 // NUTRITION",
-      title: "Centralized Kitchen",
-      desc: "Fresh, hot meals prepared three times a day using locally sourced ingredients, ensuring zero malnutrition among residential children.",
+      step: "02",
+      title: "Centralized Kitchen & Nutrition",
+      desc: "Fresh, hot, wholesome meals prepared three times a day using locally sourced grains and fresh vegetables, ensuring zero malnutrition and healthy physical development.",
       icon: Utensils,
-      color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+      iconColor: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+      benefits: ["3 Balanced Meals Daily", "Clean RO Filtered Water", "Seasonal Fruit & Milk"],
     },
     {
       id: "s3",
-      code: "03 // HEALTHCARE",
-      title: "Medical Coverage",
-      desc: "Weekly pediatric checkups, routine vaccinations, and emergency hospital coverage for all residents and homeless youth in Sangli.",
+      step: "03",
+      title: "Comprehensive Medical Coverage",
+      desc: "Weekly pediatric health checkups, routine vaccinations, dental care, emergency hospitalization coverage, and trauma-informed psychological counseling for every child.",
       icon: HeartPulse,
-      color: "text-primary bg-primary/10 border-primary/20",
+      iconColor: "text-rose-600 dark:text-rose-400 bg-rose-500/10",
+      benefits: ["Pediatric Checkups", "Emergency Care Fund", "Trauma Counseling"],
     },
   ];
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === "left" ? -400 : 400;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
-
   return (
-    <section className="py-24 lg:py-32 bg-background border-t border-border/40 relative transition-colors duration-300">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+    <section className="py-16 sm:py-20 lg:py-24 bg-card text-card-foreground border-b border-border/60 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Section Header */}
-        <div className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-border/40 pb-8">
-          <div>
-            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground leading-tight">
-              How we utilize your <span className="text-primary italic font-serif font-normal">funds in Miraj.</span>
-            </h2>
-            <p className="text-muted-foreground mt-3 max-w-xl text-lg leading-relaxed font-normal">
-              We don't believe in generic aid. Our operations are hyper-focused on core necessities for abandoned children and homeless in Sangli district.
-            </p>
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-secondary text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span>Transparent Fund Allocation</span>
           </div>
-
-          {/* Desktop Scroll Navigation Arrows */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => scroll("left")}
-              aria-label="Scroll Left"
-              className="p-2.5 rounded-full bg-secondary/80 hover:bg-secondary text-foreground border border-black/5 dark:border-white/10 transition-all shadow-apple active:scale-95"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              aria-label="Scroll Right"
-              className="p-2.5 rounded-full bg-secondary/80 hover:bg-secondary text-foreground border border-black/5 dark:border-white/10 transition-all shadow-apple active:scale-95"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
+            How we utilize your <span className="text-primary italic font-serif font-normal">funds in Miraj.</span>
+          </h2>
+          <p className="text-muted-foreground text-base sm:text-lg leading-relaxed font-normal">
+            We operate with strict financial discipline. Your donations are directly allocated to core survival and empowerment pillars for orphaned youth in the Sangli district.
+          </p>
         </div>
 
-        {/* Sideways Scrollable Row of 3 Similar Sized Boxes */}
-        <div
-          ref={scrollRef}
-          className="flex gap-6 sm:gap-8 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-8 pt-2 -mx-4 px-4 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12 scroll-smooth"
-        >
+        {/* 3 Coherent Pillar Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {services.map((svc) => {
             const Icon = svc.icon;
             return (
               <div
                 key={svc.id}
-                className="w-[330px] sm:w-[380px] lg:w-[420px] shrink-0 snap-start flex flex-col justify-between bg-card/90 dark:bg-card/70 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-apple rounded-3xl p-8 hover:shadow-appleHover transition-all duration-300 hover:-translate-y-1 group"
+                className="flex flex-col justify-between bg-background border border-border/80 rounded-3xl p-7 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group"
               >
-                <div>
-                  {/* Icon Badge */}
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border transition-transform duration-300 group-hover:scale-110 ${svc.color}`}>
-                    <Icon className="w-7 h-7" />
-                  </div>
-
-                  {/* Code Tag */}
-                  <div className="text-xs font-mono font-semibold tracking-wider text-muted-foreground mb-2">
-                    {svc.code}
+                <div className="space-y-5">
+                  {/* Top Row: Icon + Step Number */}
+                  <div className="flex items-center justify-between">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${svc.iconColor}`}>
+                      <Icon className="w-7 h-7" />
+                    </div>
+                    <span className="font-mono text-2xl font-black text-muted-foreground/30">
+                      {svc.step}
+                    </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-extrabold text-foreground mb-3 leading-snug">
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground leading-snug">
                     {svc.title}
                   </h3>
 
@@ -108,9 +80,14 @@ export default function ServicesGrid() {
                   </p>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-border/40 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-foreground/80">Direct Impact Program</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                {/* Key Program Highlights */}
+                <div className="pt-6 mt-6 border-t border-border/50 space-y-2.5">
+                  {svc.benefits.map((b, bIdx) => (
+                    <div key={bIdx} className="flex items-center gap-2 text-xs font-medium text-foreground/90">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span>{b}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             );

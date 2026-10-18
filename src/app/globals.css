@@ -8,83 +8,91 @@
    ============================================================ */
 @layer base {
   :root {
-    /* Page Background — Apple canvas gray */
-    --background: #F5F5F7;
-    --foreground: #1D1D1F;       /* Apple primary dark text */
+    /* Page Background — Warm, human, approachable canvas */
+    --background: #FAF8F5;
+    --foreground: #18181B;
 
     /* Card / Surface layers */
     --card: #FFFFFF;
-    --card-foreground: #1D1D1F;
+    --card-foreground: #18181B;
 
     /* Secondary surface (inputs, pill badges) */
-    --secondary: #E8E8ED;
-    --secondary-foreground: #1D1D1F;
+    --secondary: #F1ECE4;
+    --secondary-foreground: #27272A;
 
     /* Muted — secondary descriptions, captions */
-    --muted: #E5E5EA;
-    --muted-foreground: #86868B;   /* Apple classic muted text */
+    --muted: #E8E2D8;
+    --muted-foreground: #71717A;
 
-    /* Primary brand action (vibrant red/coral accent) */
-    --primary: #FF3B30;
+    /* Primary brand action (vibrant compassionate coral/red) */
+    --primary: #E11D48;
     --primary-foreground: #FFFFFF;
 
+    /* Brand Teal */
+    --teal: #0D9488;
+    --teal-foreground: #FFFFFF;
+
     /* Accent */
-    --accent: #F3A23A;
-    --accent-foreground: #FFFFFF;
+    --accent: #F59E0B;
+    --accent-foreground: #18181B;
 
     /* Borders, dividers */
-    --border: rgba(0, 0, 0, 0.08);
+    --border: rgba(24, 24, 27, 0.08);
 
     /* Focus ring */
-    --ring: #FF3B30;
+    --ring: #E11D48;
 
-    /* Navbar / header surface */
-    --header-bg: rgba(255, 255, 255, 0.75);
-    --header-border: rgba(0, 0, 0, 0.06);
+    /* Header / Navbar */
+    --header-bg: rgba(250, 248, 245, 0.85);
+    --header-border: rgba(24, 24, 27, 0.06);
 
     /* Footer */
-    --footer-bg: #111113;
-    --footer-text: #86868B;
+    --footer-bg: #111418;
+    --footer-text: #9CA3AF;
   }
 
   .dark {
-    /* Page Background — Apple deep black canvas */
-    --background: #000000;
-    --foreground: #F5F5F7;       /* Apple primary light text */
+    /* Page Background — Deep refined slate */
+    --background: #0D1117;
+    --foreground: #F3F4F6;
 
     /* Card surface */
-    --card: #161618;
-    --card-foreground: #F5F5F7;
+    --card: #161B22;
+    --card-foreground: #F3F4F6;
 
     /* Secondary surface */
-    --secondary: #1C1C1E;
-    --secondary-foreground: #E5E5EA;
+    --secondary: #21262D;
+    --secondary-foreground: #E5E7EB;
 
     /* Muted */
-    --muted: #2C2C2E;
-    --muted-foreground: #86868B;
+    --muted: #30363D;
+    --muted-foreground: #9CA3AF;
 
     /* Primary brand action */
-    --primary: #FF453A;
+    --primary: #F43F5E;
     --primary-foreground: #FFFFFF;
 
+    /* Brand Teal */
+    --teal: #14B8A6;
+    --teal-foreground: #FFFFFF;
+
     /* Accent */
-    --accent: #F3A23A;
+    --accent: #FBBF24;
     --accent-foreground: #000000;
 
     /* Borders */
-    --border: rgba(255, 255, 255, 0.1);
+    --border: rgba(243, 244, 246, 0.08);
 
     /* Focus ring */
-    --ring: #FF453A;
+    --ring: #F43F5E;
 
-    /* Navbar */
-    --header-bg: rgba(0, 0, 0, 0.75);
-    --header-border: rgba(255, 255, 255, 0.1);
+    /* Header / Navbar */
+    --header-bg: rgba(13, 17, 23, 0.85);
+    --header-border: rgba(243, 244, 246, 0.08);
 
     /* Footer */
-    --footer-bg: #000000;
-    --footer-text: #86868B;
+    --footer-bg: #090D12;
+    --footer-text: #9CA3AF;
   }
 }
 
@@ -117,8 +125,23 @@
   }
 
   ::selection {
-    background-color: #FF3B30;
+    background-color: var(--primary);
     color: #FFFFFF;
+  }
+
+  /* Accessibility focus styles */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 

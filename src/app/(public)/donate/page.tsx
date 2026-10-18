@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Heart, ShieldCheck, FileCheck, Phone, Mail, User, CreditCard, Sparkles, CheckCircle2, Lock, LogIn } from "lucide-react";
+import { Heart, ShieldCheck, FileCheck, Phone, Mail, User, CreditCard, Sparkles, CheckCircle2, Lock, LogIn, ArrowRight } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import RazorpayModal from "@/components/RazorpayModal";
 
@@ -68,7 +68,7 @@ export default function DonatePage() {
 
     // 1. COMPULSORY CHECK: Must be signed in via Google / Clerk
     if (!isSignedIn || !user) {
-      setErrorMsg("Authentication Required: You must sign in with Google before making a donation.");
+      setErrorMsg("Authentication Required: You must sign in before making a donation.");
       openSignIn();
       return;
     }
@@ -76,7 +76,7 @@ export default function DonatePage() {
     // 2. COMPULSORY CHECK: Must have a valid phone number
     const cleanPhone = phone.replace(/[^0-9+]/g, "");
     if (!cleanPhone || cleanPhone.length < 10) {
-      setErrorMsg("Phone Number Required: Please enter a valid 10-digit phone number to receive your payment updates and 80G tax receipt.");
+      setErrorMsg("Phone Number Required: Please enter a valid 10-digit phone number to receive payment verification and 80G tax receipts.");
       return;
     }
 
@@ -112,9 +112,9 @@ export default function DonatePage() {
         throw new Error(data.error || "Order creation failed");
       }
 
-      // 3. Initialize REAL Razorpay Checkout
+      // 3. Initialize Razorpay Checkout
       const options = {
-        key: data.key, // NEXT_PUBLIC_RAZORPAY_KEY_ID
+        key: data.key,
         amount: data.amount * 100, // in paise
         currency: "INR",
         name: "Mahanaim Miraj NGO",
@@ -152,7 +152,7 @@ export default function DonatePage() {
           pan: pan || "N/A",
         },
         theme: {
-          color: "#D9232D", // Brand Red
+          color: "#E11D48",
         },
       };
 
@@ -164,66 +164,68 @@ export default function DonatePage() {
       
     } catch (err: any) {
       console.error("Donation submit error:", err);
-      setErrorMsg(err.message || "Failed to launch donation gateway. Please try again.");
+      setErrorMsg(err.message || "Failed to launch payment gateway. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-background text-foreground py-12 md:py-20 min-h-screen border-b border-border/40 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-background text-foreground py-14 sm:py-20 min-h-screen border-b border-border/60 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/80 text-muted-foreground border border-black/5 dark:border-white/10 text-xs font-semibold uppercase tracking-wider shadow-apple">
+        {/* Page Header */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary text-xs font-semibold uppercase tracking-wider text-muted-foreground shadow-sm">
             <Sparkles className="w-4 h-4 text-primary" />
             <span>Support Mahanaim Miraj NGO</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-foreground tracking-tight">
             Make an Impact <span className="text-primary italic font-serif font-normal">Today</span>
           </h1>
-          <p className="text-muted-foreground text-base leading-relaxed font-normal">
+          <p className="text-muted-foreground text-base sm:text-lg leading-relaxed font-normal">
             Your generous contribution directly funds safe shelter, warm meals, healthcare, and schooling for abandoned children across Miraj.
           </p>
         </div>
 
         {/* Form & Info Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           
-          {/* Main Donation Form */}
-          <div className="lg:col-span-7 bg-card/90 dark:bg-card/70 backdrop-blur-2xl p-6 sm:p-10 rounded-3xl border border-black/5 dark:border-white/10 shadow-apple space-y-8">
+          {/* Main Donation Form (lg:col-span-7) */}
+          <div className="lg:col-span-7 bg-card text-card-foreground p-6 sm:p-10 rounded-3xl border border-border/80 shadow-sm space-y-8">
 
             {/* Authentication Status Banner */}
             {isLoaded && (
               <div>
                 {isSignedIn && user ? (
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-emerald-600 dark:text-emerald-400">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-emerald-700 dark:text-emerald-400">
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <div>
-                        <span className="font-bold block">Authenticated as {user.fullName || user.firstName}</span>
+                        <span className="font-bold block">Signed in as {user.fullName || user.firstName}</span>
                         <span className="text-muted-foreground">{user.primaryEmailAddress?.emailAddress}</span>
                       </div>
                     </div>
-                    <span className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      Verified User
+                    <span className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      Verified Donor
                     </span>
                   </div>
                 ) : (
-                  <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-600 dark:text-amber-400">
-                    <div className="flex items-center gap-2">
-                      <Lock className="w-5 h-5 text-amber-500 shrink-0" />
+                  <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-800 dark:text-amber-300">
+                    <div className="flex items-center gap-2.5">
+                      <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
                       <div>
-                        <span className="font-bold block">Sign-in Required</span>
-                        <span className="text-muted-foreground">You must log in with Google before donating.</span>
+                        <span className="font-bold block">Sign-in Recommended</span>
+                        <span className="text-muted-foreground">Sign in to track your donations and download 80G receipts.</span>
                       </div>
                     </div>
                     <button
+                      type="button"
                       onClick={() => openSignIn()}
-                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors shadow-sm shrink-0 active:scale-95"
                     >
-                      <LogIn className="w-4 h-4" /> Sign In with Google
+                      <LogIn className="w-4 h-4" />
+                      <span>Sign In</span>
                     </button>
                   </div>
                 )}
@@ -237,16 +239,16 @@ export default function DonatePage() {
                 <label className="block font-bold text-foreground text-sm">
                   1. Select Donation Amount (₹ INR)
                 </label>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 sm:gap-3">
                   {presets.map((val) => (
                     <button
                       key={val}
                       type="button"
                       onClick={() => handleSelectPreset(val)}
-                      className={`py-3 rounded-2xl text-sm font-bold border transition-all ${
+                      className={`py-3 rounded-2xl text-xs sm:text-sm font-bold border transition-all ${
                         amount === val && !customAmount
-                          ? "bg-primary text-white border-primary shadow-apple scale-105"
-                          : "bg-secondary/60 hover:bg-secondary text-foreground border-black/5 dark:border-white/10 hover:border-primary"
+                          ? "bg-primary text-white border-primary shadow-sm scale-102"
+                          : "bg-secondary/60 hover:bg-secondary text-foreground border-border"
                       }`}
                     >
                       ₹{val.toLocaleString("en-IN")}
@@ -263,7 +265,7 @@ export default function DonatePage() {
                     placeholder="Or enter custom amount in ₹"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
-                    className="w-full pl-9 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                    className="w-full pl-9 pr-4 py-3 bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   />
                 </div>
               </div>
@@ -285,7 +287,7 @@ export default function DonatePage() {
                         placeholder="e.g. Rajesh Sharma"
                         value={donorName}
                         onChange={(e) => setDonorName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
@@ -300,7 +302,7 @@ export default function DonatePage() {
                         placeholder="rajesh@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
@@ -319,11 +321,11 @@ export default function DonatePage() {
                         placeholder="+91 9876543210"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-background border-2 border-primary/40 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-secondary/40 border-2 border-primary/30 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
-                    <span className="text-[10px] text-muted-foreground mt-1 block">
-                      Required for Razorpay payment verification & receipt pings.
+                    <span className="text-[11px] text-muted-foreground mt-1 block">
+                      Required for Razorpay payment verification &amp; receipt delivery.
                     </span>
                   </div>
 
@@ -337,7 +339,7 @@ export default function DonatePage() {
                         value={pan}
                         onChange={(e) => setPan(e.target.value.toUpperCase())}
                         maxLength={10}
-                        className="w-full pl-10 pr-4 py-3 bg-background border border-black/10 dark:border-white/15 text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="w-full pl-10 pr-4 py-3 bg-secondary/40 border border-border text-foreground placeholder:text-muted-foreground rounded-2xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
@@ -346,7 +348,7 @@ export default function DonatePage() {
 
               {/* Error Message */}
               {errorMsg && (
-                <div className="p-4 bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-semibold rounded-2xl border border-red-500/20">
+                <div className="p-4 bg-rose-500/10 text-rose-700 dark:text-rose-400 text-xs font-semibold rounded-2xl border border-rose-500/20">
                   {errorMsg}
                 </div>
               )}
@@ -356,40 +358,42 @@ export default function DonatePage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-primary hover:bg-red-600 text-white font-bold py-4 rounded-full shadow-apple text-base transition-all duration-300 transform hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full bg-primary hover:bg-rose-700 text-white font-bold py-4 rounded-full shadow-md text-sm sm:text-base transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
                 >
                   <Heart className="w-5 h-5 fill-white" />
-                  {loading ? "Initializing Razorpay UPI..." : `Donate ₹${(customAmount ? parseFloat(customAmount) || 0 : amount).toLocaleString("en-IN")} via Dynamic UPI`}
+                  <span>
+                    {loading ? "Launching Gateway..." : `Donate ₹${(customAmount ? parseFloat(customAmount) || 0 : amount).toLocaleString("en-IN")} via Razorpay UPI`}
+                  </span>
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => openSignIn()}
-                  className="w-full bg-foreground text-background font-bold py-4 rounded-full shadow-apple text-base transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-foreground text-background font-bold py-4 rounded-full shadow-md text-sm sm:text-base transition-all flex items-center justify-center gap-2 active:scale-95"
                 >
                   <LogIn className="w-5 h-5" />
-                  Sign In with Google to Donate
+                  <span>Sign In to Complete Donation</span>
                 </button>
               )}
 
             </form>
           </div>
 
-          {/* Side Info Cards */}
+          {/* Side Info Cards (lg:col-span-5) */}
           <div className="lg:col-span-5 space-y-6">
             
             {/* 80G Tax Benefit Card */}
-            <div className="bg-primary text-white p-8 rounded-3xl shadow-apple space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-[#0F766E] to-[#115E59] text-white p-7 sm:p-8 rounded-3xl shadow-md space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center">
                 <FileCheck className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold">100% 80G Tax Benefit</h3>
-              <p className="text-xs text-white/90 leading-relaxed font-normal">
-                Mahanaim Miraj NGO is registered under Section 80G of the Income Tax Act. 50% of your donation is eligible for tax deduction. An automated tax receipt will be issued to your email.
+              <p className="text-xs sm:text-sm text-teal-100 leading-relaxed font-normal">
+                Mahanaim Miraj NGO is registered under Section 80G of the Indian Income Tax Act. 50% of your donation is eligible for tax deduction. An automated tax receipt will be sent directly to your email.
               </p>
-              <ul className="space-y-2 text-xs font-medium pt-2">
+              <ul className="space-y-2 text-xs font-medium pt-2 border-t border-white/10">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" /> Instant Digital Receipt Generated
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300" /> Instant Digital 80G PDF Receipt
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" /> Valid for IT Return Filing in India
@@ -398,7 +402,7 @@ export default function DonatePage() {
             </div>
 
             {/* NGO Direct Contact Box */}
-            <div className="bg-card border border-black/5 dark:border-white/10 p-6 rounded-3xl shadow-apple space-y-3">
+            <div className="bg-card border border-border/80 p-6 rounded-3xl shadow-sm space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase">
                 <ShieldCheck className="w-4 h-4" /> Need assistance with donation?
               </div>

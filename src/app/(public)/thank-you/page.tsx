@@ -68,117 +68,112 @@ export default function ThankYouPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream-100 via-white to-cream-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-300">
       
-      {/* Confetti Explosion */}
+      {/* Confetti Animation */}
       {showConfetti && (
         <Confetti
           width={width}
           height={height}
           recycle={false}
-          numberOfPieces={400}
+          numberOfPieces={350}
           gravity={0.15}
-          colors={['#D9232D', '#0D9488', '#FBBF24', '#F472B6', '#10B981']}
+          colors={['#E11D48', '#0D9488', '#F59E0B', '#3B82F6', '#10B981']}
         />
       )}
 
-      {/* Main Card */}
-      <div className="w-full max-w-xl bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border border-cream-200 text-center relative z-10 animate-scaleUp">
+      {/* Main Thank You Card */}
+      <div className="w-full max-w-xl bg-card text-card-foreground rounded-3xl p-8 sm:p-12 shadow-2xl border border-border/80 text-center relative z-10 animate-scaleUp">
         
-        {/* Floating Hearts Decoration */}
-        <div className="absolute -top-6 -left-6 w-16 h-16 bg-brandRed-100 rounded-full flex items-center justify-center animate-bounce shadow-sm delay-75">
-          <Heart className="w-8 h-8 fill-brandRed-500 text-brandRed-500" />
-        </div>
-        <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-gold-100 rounded-full flex items-center justify-center animate-bounce shadow-sm delay-150" style={{ animationDelay: '0.5s' }}>
-          <Sparkles className="w-6 h-6 text-gold-500" />
+        {/* Floating Heart Icon Decoration */}
+        <div className="mx-auto w-20 h-20 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20">
+          <Heart className="w-10 h-10 fill-emerald-600 text-emerald-600 dark:fill-emerald-400 dark:text-emerald-400" />
         </div>
 
-        {/* Header Content */}
+        {/* Content */}
         <div className="space-y-6">
-          
-          <div className="mx-auto w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center shadow-inner mb-6">
-            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center animate-pulse">
-              <Heart className="w-10 h-10 fill-emerald-500 text-emerald-500" />
-            </div>
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3.5 py-1 rounded-full border border-emerald-500/20 inline-block">
+              Contribution Confirmed
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+              Thank You for Your Gift!
+            </h1>
           </div>
-
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
-            Thank You!
-          </h1>
           
-          <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-            Your generosity brings <span className="font-bold text-brandRed-500">warmth</span>, <span className="font-bold text-gold-600">hope</span>, and transformational care to the children of Mahanaim Miraj NGO.
+          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed font-normal">
+            Your generous support brings <span className="font-bold text-primary">warmth</span>, <span className="font-bold text-amber-600 dark:text-amber-400">shelter</span>, and transformational hope to the orphaned children of Mahanaim Miraj NGO.
           </p>
 
           {(paymentId || orderId) && (
-            <div className="bg-cream-50 py-3 px-5 rounded-2xl border border-cream-200 inline-flex flex-col gap-1 text-xs font-mono text-gray-500">
-              {paymentId && <div>Payment ID: <strong className="text-gray-800">{paymentId}</strong></div>}
-              {orderId && <div>Order ID: <strong className="text-gray-800">{orderId}</strong></div>}
+            <div className="bg-secondary/60 p-4 rounded-2xl border border-border flex flex-col gap-1 text-xs font-mono text-muted-foreground">
+              {paymentId && <div>Payment Ref: <strong className="text-foreground">{paymentId}</strong></div>}
+              {orderId && <div>Order ID: <strong className="text-foreground">{orderId}</strong></div>}
             </div>
           )}
 
-          {/* Feedback Toasts */}
+          {/* Feedback Messages */}
           {emailSentSuccess && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 animate-fadeIn">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-              <span>Receipt sent successfully! Please check your email inbox and spam folder.</span>
+            <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 p-4 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 animate-fadeIn">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>80G Receipt sent successfully! Please check your email inbox.</span>
             </div>
           )}
 
           {emailError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-2xl text-xs font-medium animate-fadeIn">
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 p-3 rounded-2xl text-xs font-medium animate-fadeIn">
               {emailError}
             </div>
           )}
 
-          {/* 3 ACTION BUTTONS */}
-          <div className="pt-6 space-y-3">
+          {/* Action Buttons */}
+          <div className="pt-4 space-y-3">
             
-            {/* Button 1: Send Receipt on Email */}
+            {/* Button 1: Send Receipt to Email */}
             <button
               onClick={handleSendEmailReceipt}
               disabled={sendingEmail || emailSentSuccess}
-              className={`w-full font-bold py-4 px-6 rounded-2xl shadow-sm flex items-center justify-center gap-3 transition-all duration-200 ${
+              className={`w-full font-bold py-3.5 px-6 rounded-full shadow-sm flex items-center justify-center gap-2.5 text-xs sm:text-sm transition-all active:scale-95 ${
                 emailSentSuccess
-                  ? "bg-emerald-100 text-emerald-800 border border-emerald-300 cursor-default"
-                  : "bg-brandTeal-600 hover:bg-brandTeal-700 text-white shadow-brandTeal-200 hover:-translate-y-0.5"
+                  ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 cursor-default"
+                  : "bg-teal-600 hover:bg-teal-700 text-white shadow-teal-500/20"
               }`}
             >
               {sendingEmail ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Sending Receipt...</span>
                 </>
               ) : emailSentSuccess ? (
                 <>
-                  <CheckCircle2 className="w-5 h-5 text-emerald-700" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Email Receipt Sent ✓</span>
                 </>
               ) : (
                 <>
-                  <Mail className="w-5 h-5" />
-                  <span>Send Receipt on Email</span>
+                  <Mail className="w-4 h-4" />
+                  <span>Send 80G Receipt to My Email</span>
                 </>
               )}
             </button>
 
-            {/* Button 2: Download Receipt */}
+            {/* Button 2: Download PDF */}
             <button
               onClick={handleDownloadReceipt}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl shadow-sm flex items-center justify-center gap-3 transition-all duration-200 hover:-translate-y-0.5"
+              className="w-full bg-foreground text-background font-bold py-3.5 px-6 rounded-full shadow-sm flex items-center justify-center gap-2.5 text-xs sm:text-sm transition-all hover:opacity-90 active:scale-95"
             >
-              <Download className="w-5 h-5 text-gold-400" />
-              <span>Download Receipt (PDF)</span>
+              <Download className="w-4 h-4 text-primary" />
+              <span>Download 80G Tax Receipt (PDF)</span>
             </button>
 
-            {/* Button 3: Go Back Home */}
+            {/* Button 3: Return Home */}
             <Link
               href="/"
-              className="w-full bg-cream-100 hover:bg-cream-200 text-gray-800 font-bold py-4 px-6 rounded-2xl border border-cream-300 flex items-center justify-center gap-3 transition-all duration-200 hover:-translate-y-0.5"
+              className="w-full bg-secondary hover:bg-secondary/80 text-foreground font-semibold py-3.5 px-6 rounded-full border border-border flex items-center justify-center gap-2 text-xs sm:text-sm transition-all active:scale-95"
             >
-              <Home className="w-5 h-5 text-gray-600" />
-              <span>Go Back Home</span>
-              <ArrowRight className="w-4 h-4 text-gray-400" />
+              <Home className="w-4 h-4 text-muted-foreground" />
+              <span>Return to Home</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
             </Link>
 
           </div>

@@ -3,78 +3,106 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin } from "lucide-react";
+import { MapPin, Heart, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-background text-foreground border-b border-border/40 overflow-hidden flex items-center py-8 sm:py-10 lg:py-12">
-      {/* Background subtle ambient glows */}
-      <div className="absolute top-1/4 right-10 w-[400px] h-[400px] bg-red-500/5 dark:bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-5 left-10 w-[350px] h-[350px] bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative bg-background text-foreground border-b border-border/60 overflow-hidden py-10 sm:py-12 lg:py-14 transition-colors duration-300">
+      {/* Subtle organic ambient background gradients */}
+      <div className="absolute top-10 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10 w-full">
-        {/* Asymmetric 12-column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
           
-          {/* Left Column: Tightened Typography & Main CTA */}
-          <div className="lg:col-span-8 space-y-4 sm:space-y-5">
+          {/* Left Column: Heading, Subtitle & CTAs */}
+          <div className="lg:col-span-7 space-y-6 sm:space-y-7 text-center lg:text-left">
             
-            {/* Tagline Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/80 backdrop-blur-xl border border-black/5 dark:border-white/10 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase shadow-apple">
-              <span className="w-2 h-2 bg-primary rounded-full inline-block animate-pulse"></span>
-              Spread Love.... Spread Peace....
+            {/* Tagline Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/80 border border-border text-xs font-semibold tracking-wider text-muted-foreground uppercase shadow-sm">
+              <span className="w-2 h-2 bg-primary rounded-full inline-block animate-pulse" />
+              <span>Spread Love.... Spread Peace....</span>
             </div>
 
-            {/* Headline */}
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-foreground leading-[1.05] tracking-tight max-w-4xl">
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.12] tracking-tight">
               Sheltering & nurturing children in{" "}
-              <span className="text-primary italic font-serif font-normal">
+              <span className="text-primary italic font-serif font-normal underline decoration-primary/30 underline-offset-8">
                 Maharashtra.
               </span>
             </h1>
 
-            {/* Subtext */}
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-normal">
+            {/* Subtext Description */}
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal max-w-2xl mx-auto lg:mx-0">
               Mahanaim NGO operates a 24/7 care facility on Station Road, Miraj. We provide 
               secure housing, three wholesome meals a day, medical care, and schooling for children who have 
-              nowhere else to go. 
+              nowhere else to go.
             </p>
 
             {/* Action Buttons */}
-            <div className="pt-1 flex flex-wrap items-center gap-3.5">
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Link
                 href="/donate"
-                className="bg-primary hover:bg-red-600 text-white font-medium px-7 py-3 rounded-full shadow-apple hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center gap-2.5 text-sm"
+                className="w-full sm:w-auto bg-primary hover:bg-rose-700 text-white font-semibold px-7 py-3.5 rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 flex items-center justify-center gap-2.5 text-sm"
               >
-                Fund a child's meal (₹50)
+                <Heart className="w-4 h-4 fill-white" />
+                <span>Fund a child&apos;s meal (₹50)</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
+              
               <a
                 href="https://www.google.com/maps/search/?api=1&query=Mahanaim+NGO+Station+Road+Miraj+Maharashtra"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3 rounded-full border border-black/10 dark:border-white/15 text-foreground hover:bg-secondary/80 font-semibold transition-all duration-200 flex items-center gap-2 text-sm shadow-apple hover:scale-[1.02] active:scale-95"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full border border-border text-foreground hover:bg-secondary font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm active:scale-95 shadow-sm"
               >
                 <MapPin className="w-4 h-4 text-primary" />
-                View on Map
+                <span>View on Map</span>
               </a>
+            </div>
+
+            {/* Quick Trust Highlights */}
+            <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-muted-foreground font-medium border-t border-border/50">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>80G Tax Exempted</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>100% Transparent Direct Aid</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span>Reg. NGO in Miraj, Sangli</span>
+              </div>
             </div>
 
           </div>
 
-          {/* Right Column: Hero Image Card */}
-          <div className="lg:col-span-4 relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[340px] aspect-[4/4.6] rounded-3xl overflow-hidden shadow-apple hover:shadow-appleHover border border-black/5 dark:border-white/10 bg-card transition-all duration-500 group">
+          {/* Right Column: Editorial Hero Photo Frame */}
+          <div className="lg:col-span-5 relative flex justify-center">
+            <div className="relative w-full max-w-md aspect-[4/4.5] sm:aspect-[4/4.8] rounded-3xl overflow-hidden shadow-xl border border-border bg-card group">
               <Image
                 src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000&auto=format&fit=crop"
-                alt="Children playing at Mahanaim Miraj"
+                alt="Children playing and learning at Mahanaim Miraj"
                 fill
                 priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 450px"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5">
-                <div>
-                  <p className="text-white font-semibold text-sm tracking-tight">Mahanaim Children Home</p>
-                  <p className="text-zinc-300 text-xs mt-0.5">Miraj, Maharashtra</p>
+              {/* Bottom Vignette & Information */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-white text-[11px] font-semibold border border-white/20">
+                    <MapPin className="w-3 h-3 text-rose-400" />
+                    <span>Station Road, Miraj</span>
+                  </div>
+                  <h3 className="text-white font-bold text-base sm:text-lg drop-shadow-md">
+                    Mahanaim Children Sanctuary & Care Home
+                  </h3>
+                  <p className="text-zinc-300 text-xs">
+                    Safe haven providing education, nutrition, and love 24/7
+                  </p>
                 </div>
               </div>
             </div>

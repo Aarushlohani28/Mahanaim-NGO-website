@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getEvents, NGOEvent } from "@/lib/dataStore";
-import { ArrowUpRight, MapPin, CalendarDays, IndianRupee, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, MapPin, CalendarDays, IndianRupee, Heart, Sparkles } from "lucide-react";
 
 export default function UpcomingEvents() {
   const [events, setEvents] = useState<NGOEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function loadEvents() {
@@ -25,124 +24,101 @@ export default function UpcomingEvents() {
     loadEvents();
   }, []);
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === "left" ? -400 : 400;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
-
   return (
-    <section id="events" className="py-24 lg:py-32 bg-background border-t border-border/40 relative overflow-hidden transition-colors duration-300">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+    <section id="events" className="py-16 sm:py-20 lg:py-24 bg-background text-foreground border-b border-border/60 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Section Header */}
-        <div className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-border/40 pb-8">
-          <div>
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/60 pb-8">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span>Ground Action</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight">
               Community <span className="text-primary italic font-serif font-normal">Schedule</span>
             </h2>
-            <p className="text-muted-foreground text-lg max-w-xl mt-3 leading-relaxed font-normal">
-              Join us on the ground. Here is our confirmed schedule for upcoming distribution drives in the Sangli district.
+            <p className="text-muted-foreground text-base sm:text-lg leading-relaxed font-normal">
+              Join us on the ground or support remotely. Here is our confirmed schedule for upcoming distribution drives in the Sangli district.
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Scroll Navigation Arrows */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => scroll("left")}
-                aria-label="Scroll Left"
-                className="p-2.5 rounded-full bg-secondary/80 hover:bg-secondary text-foreground border border-black/5 dark:border-white/10 transition-all shadow-apple active:scale-95"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => scroll("right")}
-                aria-label="Scroll Right"
-                className="p-2.5 rounded-full bg-secondary/80 hover:bg-secondary text-foreground border border-black/5 dark:border-white/10 transition-all shadow-apple active:scale-95"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            {events.length > 3 && (
-              <Link
-                href="/events"
-                className="text-sm font-semibold text-foreground hover:text-primary flex items-center gap-1.5 group transition-colors"
-              >
-                Browse All Drives <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-            )}
-          </div>
+          <Link
+            href="/events"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors bg-secondary/60 hover:bg-secondary px-5 py-2.5 rounded-full border border-border shrink-0 shadow-sm"
+          >
+            <span>Browse All Drives</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </Link>
         </div>
 
+        {/* Event Cards Grid */}
         {loading ? (
-          <div className="flex gap-6 overflow-hidden animate-pulse">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 bg-secondary/40 rounded-3xl w-[380px] shrink-0" />
+              <div key={i} className="h-96 bg-secondary/40 rounded-3xl" />
             ))}
           </div>
         ) : (
-          /* Sideways Scrollable Row of 3 Similar Sized Boxes */
-          <div
-            ref={scrollRef}
-            className="flex gap-6 sm:gap-8 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-8 pt-2 -mx-4 px-4 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12 scroll-smooth"
-          >
-            {events.map((evt) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {events.slice(0, 3).map((evt) => (
               <div
                 key={evt.id}
-                className="w-[330px] sm:w-[380px] lg:w-[420px] shrink-0 snap-start flex flex-col justify-between bg-card/90 dark:bg-card/70 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-apple rounded-3xl p-7 hover:shadow-appleHover transition-all duration-300 hover:-translate-y-1 group"
+                className="flex flex-col justify-between bg-card text-card-foreground border border-border/80 rounded-3xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group"
               >
-                <div>
-                  {/* Event Image with Rounded Edges */}
-                  <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden mb-6 shadow-sm">
+                <div className="space-y-4">
+                  {/* Event Image */}
+                  <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden bg-secondary shadow-inner">
                     <Image
-                      src={evt.imageUrl}
+                      src={evt.imageUrl || "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000&auto=format&fit=crop"}
                       alt={evt.title}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    {/* Floating Badges */}
-                    <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
-                      <span className="bg-black/60 dark:bg-black/80 backdrop-blur-md text-white text-[10px] uppercase tracking-wider font-semibold px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                        <CalendarDays className="w-3 h-3 text-emerald-400" />
-                        {evt.date.toUpperCase()}
+                    <div className="absolute top-3 left-3 right-3 flex justify-between items-center">
+                      <span className="bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1 rounded-full border border-white/10 flex items-center gap-1.5 uppercase tracking-wider">
+                        <CalendarDays className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{evt.date}</span>
                       </span>
-                      <span className="bg-black/60 dark:bg-black/80 backdrop-blur-md text-white text-[10px] uppercase tracking-wider font-semibold px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-amber-400" />
-                        {evt.location}
+                      <span className="bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-amber-300" />
+                        <span className="truncate max-w-[120px]">{evt.location}</span>
                       </span>
                     </div>
                   </div>
 
-                  {/* Title & Description */}
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-foreground leading-snug line-clamp-2 min-h-[3.5rem]">
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-foreground leading-snug line-clamp-2 min-h-[3.5rem]">
                     {evt.title}
                   </h3>
 
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 font-normal mt-2.5">
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 font-normal">
                     {evt.description}
                   </p>
                 </div>
 
                 {/* Target Metric & CTA */}
-                <div className="pt-6 mt-4 border-t border-border/40 space-y-4">
-                  <div className="bg-secondary/40 p-3.5 rounded-2xl border border-black/5 dark:border-white/5 flex items-center justify-between">
+                <div className="pt-6 mt-6 border-t border-border/60 space-y-4">
+                  <div className="bg-secondary/50 p-3.5 rounded-2xl border border-border/50 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <IndianRupee className="w-4 h-4 text-primary" />
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                        <IndianRupee className="w-3.5 h-3.5 text-primary" />
                       </div>
-                      <span className="text-xs font-semibold text-muted-foreground uppercase">Target</span>
+                      <span className="text-xs font-semibold text-muted-foreground uppercase">Target Budget</span>
                     </div>
-                    <span className="font-mono text-lg font-bold text-foreground">₹{evt.target.toLocaleString("en-IN")}</span>
+                    <span className="font-mono text-base font-bold text-foreground">
+                      ₹{evt.target.toLocaleString("en-IN")}
+                    </span>
                   </div>
 
                   <Link
                     href="/donate"
-                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-red-600 text-white text-xs font-semibold py-3 rounded-full transition-all shadow-apple hover:scale-[1.02] active:scale-95"
+                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold py-3 rounded-full transition-all duration-200 shadow-sm active:scale-95"
                   >
-                    Contribute to Drive
+                    <Heart className="w-4 h-4 fill-white" />
+                    <span>Contribute to Drive</span>
                   </Link>
                 </div>
               </div>
