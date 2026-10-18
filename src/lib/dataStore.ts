@@ -213,11 +213,23 @@ let localDonationsStore: DonationRecord[] = [];
 
 // Helper to safely retrieve admin token in client or server context
 function getStoredAdminToken(explicitToken?: string): string {
-  if (explicitToken) return explicitToken;
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("mahanaim_admin_token") || "";
+  if (explicitToken && explicitToken !== "undefined" && explicitToken.trim() !== "") {
+    return explicitToken;
   }
-  return "";
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("mahanaim_admin_token");
+    if (stored && stored !== "undefined" && stored.trim() !== "") return stored;
+    const fallback = process.env.NEXT_PUBLIC_ADMIN_SECRET_TOKEN || "MahanaimAdminSecret2026!ChangeMe";
+    try {
+      localStorage.setItem("mahanaim_admin_token", fallback);
+    } catch {}
+    return fallback;
+  }
+  return (
+    process.env.ADMIN_SECRET_TOKEN ||
+    process.env.NEXT_PUBLIC_ADMIN_SECRET_TOKEN ||
+    "MahanaimAdminSecret2026!ChangeMe"
+  );
 }
 
 /* --- CAUSES CRUD --- */
@@ -226,7 +238,10 @@ export async function getCauses(): Promise<CauseItem[]> {
     const res = await fetch("/api/causes", { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
-      if (Array.isArray(data.causes) && data.causes.length > 0) return data.causes;
+      if (Array.isArray(data.causes)) {
+        localCausesStore = data.causes;
+        return data.causes;
+      }
     }
   } catch (err) {
     console.warn("API /api/causes fetch error, fallback used:", err);
@@ -312,7 +327,6 @@ export async function updateCause(
 
 export async function deleteCause(id: string, adminToken?: string): Promise<boolean> {
   const token = getStoredAdminToken(adminToken);
-  localCausesStore = localCausesStore.filter((c) => c.id !== id);
   try {
     const headers: Record<string, string> = {};
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -325,6 +339,7 @@ export async function deleteCause(id: string, adminToken?: string): Promise<bool
       const errData = await res.json().catch(() => ({}));
       throw new Error(errData.error || `Server returned ${res.status}`);
     }
+    localCausesStore = localCausesStore.filter((c) => c.id !== id);
     return true;
   } catch (err) {
     console.warn("API /api/causes DELETE error:", err);

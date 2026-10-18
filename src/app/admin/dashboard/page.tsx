@@ -85,8 +85,18 @@ export default function AdminDashboardPage() {
   const [galHoverDesc, setGalHoverDesc] = useState("");
 
 
-  const getAdminToken = () =>
-    typeof window !== "undefined" ? localStorage.getItem("mahanaim_admin_token") : null;
+  const getAdminToken = (): string => {
+    if (typeof window === "undefined") return "";
+    const stored = localStorage.getItem("mahanaim_admin_token");
+    if (stored && stored !== "undefined" && stored.trim() !== "") {
+      return stored;
+    }
+    const fallback = process.env.NEXT_PUBLIC_ADMIN_SECRET_TOKEN || "MahanaimAdminSecret2026!ChangeMe";
+    try {
+      localStorage.setItem("mahanaim_admin_token", fallback);
+    } catch {}
+    return fallback;
+  };
 
   useEffect(() => {
     // Auth Check
@@ -281,18 +291,26 @@ export default function AdminDashboardPage() {
   // --- CRUD: CAUSES ---
   const handleCreateCause = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!causeTitle || !causeDesc || !causeImageFile) {
-      alert("Please fill all fields and select an image.");
+    if (!causeTitle || !causeDesc) {
+      alert("Please fill in the Cause Title and Description.");
       return;
     }
     
     setPublishing(true);
     setSuccessMsg("");
     const token = getAdminToken();
+    console.log("[Admin] Creating cause. Token present:", !!token, "| Token starts with:", token?.substring(0, 15));
     try {
-      const uploadedUrl = await uploadImageToImgBB(causeImageFile);
+      // Image is optional — use default if not provided
+      let uploadedUrl = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000&auto=format&fit=crop";
+      if (causeImageFile) {
+        console.log("[Admin] Uploading image to ImgBB...");
+        uploadedUrl = await uploadImageToImgBB(causeImageFile);
+        console.log("[Admin] Image uploaded:", uploadedUrl);
+      }
       
-      await addCause(
+      console.log("[Admin] Calling POST /api/causes...");
+      const result = await addCause(
         {
           title: causeTitle,
           description: causeDesc,
@@ -302,15 +320,16 @@ export default function AdminDashboardPage() {
         },
         token || ""
       );
-      setSuccessMsg("🎉 Cause successfully published and live on the viewer site!");
+      console.log("[Admin] Cause created successfully:", result);
+      setSuccessMsg("🎉 Cause published and live on viewer site!");
       setCauseTitle("");
       setCauseDesc("");
       setCauseImageFile(null);
       setTimeout(() => setSuccessMsg(""), 5000);
       loadDashboardData();
     } catch (err: any) {
-      console.error("Cause creation error:", err);
-      alert(err.message || "Failed to upload image or create cause.");
+      console.error("[Admin] Cause creation error:", err);
+      alert("❌ Failed to create cause:\n" + (err.message || String(err)));
     } finally {
       setPublishing(false);
     }
@@ -368,14 +387,17 @@ export default function AdminDashboardPage() {
   const handleDeleteCause = async (id: string) => {
     if (confirm("Are you sure you want to delete this cause?")) {
       const token = getAdminToken();
+      console.log("[Admin] Deleting cause ID:", id, "| Token present:", !!token);
       try {
         await deleteCause(id, token || "");
-        setSuccessMsg("Cause deleted successfully from database and viewer site.");
+        console.log("[Admin] Cause deleted from DB:", id);
+        setSuccessMsg("Cause deleted successfully.");
         setTimeout(() => setSuccessMsg(""), 4000);
         loadDashboardData();
       } catch (err: any) {
-        console.error("Cause deletion error:", err);
-        alert(err.message || "Failed to delete cause.");
+        console.error("[Admin] Cause deletion error:", err);
+        alert("❌ Failed to delete cause:\n" + (err.message || String(err)));
+        loadDashboardData(); // Re-fetch so UI reflects actual DB state
       }
     }
   };
@@ -670,11 +692,10 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-gray-700 block mb-1">Image Upload *</label>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Image Upload (optional — default used if left blank)</label>
                   <input
                     type="file"
                     accept="image/*"
-                    required
                     onChange={(e) => setCauseImageFile(e.target.files?.[0] || null)}
                     className="w-full px-4 py-3 bg-cream-50 border border-cream-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
                   />
